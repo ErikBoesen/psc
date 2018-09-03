@@ -161,8 +161,8 @@ for _ in range(2):
 print('Course'.ljust(30), end=' ')
 for grade in grades:
     print(grade.ljust(5), end=' ')
-print('Abs'.ljust(2), end=' ')
-print('Tar'.ljust(2), end=' ')
+print('Abs'.ljust(3), end=' ')
+print('Tar'.ljust(3), end=' ')
 print()
 
 # Content
@@ -175,8 +175,8 @@ for course in courses:
     print(course['Course'].ljust(30), end=' ')
     for grade in grades:
         print(course['Grades'][grade].ljust(5), end=' ')
-    print(course['Absences'].ljust(2), end=' ')
-    print(course['Tardies'].ljust(2), end=' ')
+    print(course['Absences'].ljust(3), end=' ')
+    print(course['Tardies'].ljust(3), end=' ')
     print()
 
 
