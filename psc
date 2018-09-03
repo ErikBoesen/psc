@@ -14,8 +14,9 @@ from termcolor import colored
 
 parser = argparse.ArgumentParser(description='View PowerSchool grades from the command line.')
 # TODO: Implement course grade viewing
-parser.add_argument('-c', dest='course', nargs=1, help='Course to view assignment grades from. UNIMPLEMENTED')
+parser.add_argument('-c', dest='course', nargs=1, help='Course to view assignment grades from (UNIMPLEMENTED)')
 parser.add_argument('--debug', default=False, action='store_true', help='Output debug information')
+parser.add_argument('--no-color', default=False, action='store_true', help='Disable colors (UNIMPLEMENTED)')
 args = parser.parse_args()
 
 CONFIG_PATH = os.path.expanduser('~') + '/.psc.yml'
