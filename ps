@@ -54,7 +54,9 @@ payload = {
 p = s.post(url, data=payload)
 content = p.content
 
-print(content)
+bs = BeautifulSoup(content, 'lxml')
+table = bs.find('table', class_='linkDescList grid')
+print(table)
 
 """
 def createSmallClass(teacher, grade):
