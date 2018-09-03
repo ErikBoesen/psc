@@ -122,8 +122,15 @@ for row in rows:
 
     cls['Grades'] = {}
     for grade in grades:
-        cls['Grades'][grade] = cells.pop(0).text.strip()
-    for i, cell in enumerate(cells):
+        cls['Grades'][grade] = clean_grade(cells.pop(0).text.strip())
+
+    # Absences and Tardies
+    # TODO: Throw if the headers are wrong
+    cls[titles[4]] = cells.pop(0).text
+    cls[titles[5]] = cells.pop(0).text
+
+    # Debug
+    """for i, cell in enumerate(cells):
         print(cell.text, end=' ')
     print()
     classes.append(cls)
