@@ -14,12 +14,17 @@ CONFIG_PATH = os.path.expanduser('~') + '/.pow.yml'
 config = {
     'username': '',
     'password': '',
+    # Additional, nonessential properties will be added later if generating config.
 }
 if os.path.isfile(CONFIG_PATH) and os.path.getsize(CONFIG_PATH) is not 0:
     with open(CONFIG_PATH, 'r') as f:
         config = yaml.load(f)
 else:
     config = {key: input(key + ': ') for key in config.keys()}
+    config += {
+        # For example, HR and DA
+        'ignored_periods': [],
+    }
     with open(CONFIG_PATH, 'w') as f:
         yaml.dump(config, f)
     os.chmod(CONFIG_PATH, stat.S_IRUSR | stat.S_IRUSR)
