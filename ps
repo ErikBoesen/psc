@@ -139,8 +139,12 @@ print(days)
 print(classes)
 
 # Print out table
+# Helper functions
+def simplify_attendance(string: str) -> str:
+    return string[0]
+
 # Headers
-print('Per'.ljust(6), end=' ')
+print('Per'.ljust(3), end=' ')
 for _ in range(2):
     print(''.join(days), end=' ')
 print('Course'.ljust(12), end=' ')
@@ -149,6 +153,12 @@ for grade in grades:
 print('Abs'.ljust(2), end=' ')
 print('Tar'.ljust(2), end=' ')
 print()
+
+# Content
+for cls in classes:
+    print(cls['Exp'].ljust(3), end=' ')
+    print(''.join([cls['Last Week'][day] for day in days]), end=' ')
+    print(''.join([cls['This Week'][day] for day in days]), end=' ')
 
 
 """
