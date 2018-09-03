@@ -35,7 +35,8 @@ for b in buttons:
 form = browser.select_form('#LoginForm')
 print(form.print_summary())
 # so much blood
-form.choose_submit('#btn-powerschool-id')
+submit = form.form.select('#btn-enter-sign-in')[0]
+form.choose_submit(submit)
 browser['account'] = config['username']
 browser['pw'] = config['password']
 resp = browser.submit_selected()
