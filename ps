@@ -98,6 +98,16 @@ for row in rows:
     # Store Last Week and This Week attendance
     cls[titles[1]] = {day: cells.pop(0).text.strip() for day in days}
     cls[titles[2]] = {day: cells.pop(0).text.strip() for day in days}
+    # Deal with class name, teacher, etc.
+    course_cell = cells.pop(0)
+    # Get name of class
+    # TODO: Better way to get rid of \xa0 than .strip()?
+    cls[titles[3]] = course_cell.find('br').previousSibling.strip()
+    links = course_cell.find_all('a')
+    cls['Teacher'] = links.pop(0).text[len('Details about '):]
+    cls['Teacher Email'] = links[0]['href'][len('mailto:'):]
+    cls['Room'] = links[0].nextSibling.strip()[len(' - Rm: '):]
+
     for cell in cells:
         print(cell.text, end=' ')
     print()
