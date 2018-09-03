@@ -92,6 +92,7 @@ def clean_grade(string: str) -> str:
     """
     Clean nonsense from grade output.
     """
+    #return string # debug, for showing that grade output works
     if string in ['[ i ]']:
         return ''
     else:
@@ -162,6 +163,8 @@ for cls in classes:
     print(cls['Course'].ljust(30), end=' ')
     for grade in grades:
         print(cls['Grades'][grade].ljust(5), end=' ')
+    print(cls['Absences'].ljust(2), end=' ')
+    print(cls['Tardies'].ljust(2), end=' ')
     print()
 
 
