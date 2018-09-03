@@ -183,7 +183,7 @@ for course in courses:
     print(course['Exp'].ljust(3), end=' ')
     print(''.join([simplify_attendance(course['Last Week'][day]) for day in days]), end=' ')
     print(''.join([simplify_attendance(course['This Week'][day]) for day in days]), end=' ')
-    print(course['Course'].ljust(30), end=' ')
+    print(colored(course['Course'].ljust(30), config['colors']['course_name']), end=' ')
     for grade in grades:
         # TODO: Implement colors with thresholds
         print(course['Grades'][grade].ljust(5), end=' ')
