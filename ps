@@ -96,8 +96,8 @@ for row in rows:
     # Store period name
     cls[titles[0]] = clean_period(cells.pop(0).text)
     # Store Last Week and This Week attendance
-    cls[titles[1]] = {day: cells.pop(0).text for day in days}
-    cls[titles[2]] = {day: cells.pop(0).text for day in days}
+    cls[titles[1]] = {day: cells.pop(0).text.strip() for day in days}
+    cls[titles[2]] = {day: cells.pop(0).text.strip() for day in days}
     for cell in cells:
         print(cell.text, end=' ')
     print()
