@@ -92,13 +92,17 @@ classes = []
 for row in rows:
     cls = {}
     cells = row.find_all('td')
-    # TODO: Clean all periods at end
+    # TODO: Clean all periods at end?
+    # Store period name
     cls[titles[0]] = clean_period(cells.pop(0).text)
-    print(cls)
+    # Store Last Week and This Week attendance
+    cls[titles[1]] = {day: cells.pop(0).text for day in days}
+    cls[titles[2]] = {day: cells.pop(0).text for day in days}
     for cell in cells:
         print(cell.text, end=' ')
     print()
-
+    classes.append(cls)
+print(classes)
 """
 def createSmallClass(teacher, grade):
     data={}
