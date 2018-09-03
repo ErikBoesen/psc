@@ -37,25 +37,26 @@ def hash(password, contextdata):
     return hmac.new(contextdata.encode('ascii'), base64.b64encode(hashlib.md5(password.encode('ascii')).digest()).replace(b'=', b''), hashlib.md5).hexdigest()
 
 url = 'https://ps.fccps.org/guardian/home.html'
-result=s.get(url)
+result = s.get(url)
 tree = html.fromstring(result.text)
 pstoken = list(set(tree.xpath('//*[@id=\'LoginForm\']/input[1]/@value')))[0]
 contextdata = list(set(tree.xpath('//input[@id=\'contextData\']/@value')))[0]
-new_pw=hash(pw,contextdata)
+new_pw = hash(config['password'], contextdata)
 
 payload = {
     'pstoken': pstoken,
     'contextData': contextdata,
     'dbpw': new_pw,
-    'ldappassword': pw,
-    'account': user,
-    'pw': pw
+    'ldappassword': config['password'],
+    'account': config['username'],
+    'pw': config['password']
 }
-p=s.post(url, data=payload)
+p = s.post(url, data=payload)
+content = p.content
 
+print(content)
 
-
-
+"""
 def createSmallClass(teacher, grade):
     data={}
     data['teacher']=teacher
@@ -124,6 +125,4 @@ def getAllGrades(p):
     return data
 def printJSON(data):
     print(json.dumps(data))
-
-p = login(config['username'], config['password'])
-printJSON(getAllGrades(p))
+"""
