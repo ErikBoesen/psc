@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 import hmac, hashlib, base64
 # TODO: Find alternative in existing imports
 from lxml import html
+from termcolor import colored
 
 parser = argparse.ArgumentParser(description='View PowerSchool grades from the command line.')
 # TODO: Implement course grade viewing
