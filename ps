@@ -56,10 +56,10 @@ content = p.content
 
 bs = BeautifulSoup(content, 'lxml')
 table = bs.find('table', class_='linkDescList grid')
-
-for row in table.find_all('tr'):
+rows = table.find_all('tr')
+for row in rows:
     #print(row.prettify())
-    for cell in row.find_all('td'):
+    for cell in row.find_all(['th', 'td']):
         print(cell.text, end=' ')
     print()
 
