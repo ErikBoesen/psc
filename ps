@@ -5,6 +5,14 @@ import yaml
 import stat
 import sys
 
+# Copied dependencies, TODO: cleanup needed
+import requests, re,io,json
+from lxml import html
+import hmac, hashlib, base64
+from bs4 import BeautifulSoup
+import urllib.request
+from tabulate import tabulate
+
 CONFIG_PATH = os.path.expanduser('~') + '/.pow.yml'
 config = {
     'username': '',
@@ -24,28 +32,98 @@ else:
 if os.stat(CONFIG_PATH).st_mode & (stat.S_IRGRP | stat.S_IROTH):
     print('Warning: config file may be accessible by other users.', file=sys.stderr)
 
-# Load PowerSchool login page
-browser = mechanicalsoup.StatefulBrowser()
-browser.set_verbose(2)
-browser.open('https://ps.fccps.org')
+s = requests.Session()
+def hash(password, contextdata):
+    return hmac.new(contextdata.encode('ascii'), base64.b64encode(hashlib.md5(password.encode('ascii')).digest()).replace(b"=", b""), hashlib.md5).hexdigest()
 
-buttons = browser.get_current_page().find_all('button')
-for b in buttons:
-    print(b)
-# Fill in login form
-form = browser.select_form('#LoginForm')
-print(form.print_summary())
-# so much blood
-submit = form.form.select('#btn-enter-sign-in')[0]
-form.choose_submit(submit)
-browser['account'] = config['username']
-browser['pw'] = config['password']
-resp = browser.submit_selected()
+url = "https://ps.fccps.org/guardian/home.html"
+result=s.get(url)
+tree = html.fromstring(result.text)
+pstoken = list(set(tree.xpath("//*[@id=\"LoginForm\"]/input[1]/@value")))[0]
+contextdata = list(set(tree.xpath("//input[@id=\"contextData\"]/@value")))[0]
+new_pw=hash(pw,contextdata)
 
-# Verify we're in
-page = browser.get_current_page()
-#print(page)
-messages = page.find_all('td')
-print(len(messages))
-for message in messages:
-    print(message.text)
+payload={
+'pstoken':pstoken,
+'contextData':contextdata,
+'dbpw':new_pw,
+'ldappassword':pw,
+'account':user,
+'pw':pw
+}
+p=s.post(url, data=payload)
+
+
+
+
+def createSmallClass(teacher, grade):
+    data={}
+    data["teacher"]=teacher
+    data["grade"]=grade
+    return data
+def getRawClass(p):
+    x={}
+    data=BeautifulSoup(p.content, "lxml")
+    grades=data.findAll("a", { "class" : "bold" })
+    tr=data.findAll('tr', {"id":re.compile("^ccid_\d+")})
+    for i in range (0,6):
+        td=tr[i].findAll('td')
+        grade=td[len(td)-3]
+        a=list(grade.find("a").getText())
+        del a[0]
+        a="".join(a)
+        teacher=tr[i].find("span",{ "class" : "screen_readers_only" }).parent["title"].strip("Details about ").replace(",","").split(" ")
+        teacher.reverse()
+        if(len(teacher)==3):
+            del teacher[0]
+        teacher= " ".join(teacher)
+        x["{}".format(i+1)]=createSmallClass(teacher, a)
+    return x
+def createSmallAssignment(date, category, name, score, percent):
+    data={}
+    data["date"]=date
+    data["category"]=category
+    data["name"]=name
+    data["score"]=score
+    data["percent"]=percent
+    return data
+def getRawAssignments(p,period):
+    data=BeautifulSoup(p.content, "lxml")
+    grades=data.findAll("a", { "class" : "bold" })
+    tr=data.findAll('tr', {"id":re.compile("^ccid_\d+")})
+    td=tr[period-1].findAll('td')
+    grade=td[len(td)-3]
+    a=list(grade.find("a").getText())
+    href="https://powerschool.sandi.net/guardian/"+grade.find("a")['href']
+
+    p=s.get(href, headers = {'Accept-Encoding': 'identity'})
+    data=BeautifulSoup(p.content, "lxml")
+    table=data.find("table", { "align" : "center" })
+    tr=table.findAll("tr")
+    assignments={}
+    for i in range (1,len(tr)):
+        td=tr[i].findAll("td")
+        assignments["{}".format(hex(i))]=createSmallAssignment(td[0].getText(),td[1].getText(),td[2].getText(),td[8].getText(),td[9].getText())
+    return assignments
+    return all
+def getAllClass(p,period):
+    data={}
+    data["{}".format(period)]=getRawAssignments(p,period)
+    data["assignments"]=data.pop("{}".format(period))
+    data["info"]=getRawClass(p)["{}".format(period)]
+    return data
+def getAllAssignments(p):
+    data={}
+    for i in range(1,7):
+        data["{}".format(i)]=getRawAssignments(p,i)
+    return data
+def getAllGrades(p):
+    data={}
+    for i in range(1,7):
+        data["{}".format(i)]=getAllClass(p,i)
+    return data
+def printJSON(data):
+    print(json.dumps(data))
+
+p = login(config['username'], config['password'])
+printJSON(getAllGrades(p))
