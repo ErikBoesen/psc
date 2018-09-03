@@ -132,11 +132,23 @@ for row in rows:
     print()"""
     classes.append(cls)
 
+# Debug
 print(titles)
 print(grades)
 print(days)
 print(classes)
 
+# Print out table
+# Headers
+print('Per'.ljust(6), end=' ')
+for _ in range(2):
+    print(''.join(days), end=' ')
+print('Course'.ljust(12), end=' ')
+for grade in grades:
+    print(grade.ljust(5), end=' ')
+print('Abs'.ljust(2), end=' ')
+print('Tar'.ljust(2), end=' ')
+print()
 
 
 """
