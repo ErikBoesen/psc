@@ -1,21 +1,17 @@
 #!/usr/bin/env python3
 import mechanicalsoup
 
-# Connect to duckduckgo
+# Load PowerSchool login page
 browser = mechanicalsoup.StatefulBrowser()
 browser.open("https://ps.fccps.org")
 
-# Fill-in the search form
+# Fill in login form
 browser.select_form('#LoginForm')
-# TODO: Are these name properties or ids?
 browser['account'] = 'boesene'
 browser['pw'] = 'you thought'
 resp = browser.submit_selected()
 
-# Uncomment to launch a web browser on the current page:
-# browser.launch_browser()
-
-# verify we are now logged in
+# Verify we're in
 page = browser.get_current_page()
 print(page)
 messages = page.find('td')
