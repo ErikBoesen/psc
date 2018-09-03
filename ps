@@ -147,7 +147,7 @@ def simplify_attendance(string: str) -> str:
 print('Per'.ljust(3), end=' ')
 for _ in range(2):
     print(''.join(days), end=' ')
-print('Course'.ljust(12), end=' ')
+print('Course'.ljust(30), end=' ')
 for grade in grades:
     print(grade.ljust(5), end=' ')
 print('Abs'.ljust(2), end=' ')
@@ -159,6 +159,7 @@ for cls in classes:
     print(cls['Exp'].ljust(3), end=' ')
     print(''.join([simplify_attendance(cls['Last Week'][day]) for day in days]), end=' ')
     print(''.join([simplify_attendance(cls['This Week'][day]) for day in days]), end=' ')
+    print(cls['Course'].ljust(30), end=' ')
     print()
 
 
