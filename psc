@@ -14,7 +14,7 @@ from lxml import html
 parser = argparse.ArgumentParser(description='View PowerSchool grades from the command line.')
 # TODO: Implement course grade viewing
 parser.add_argument('-c', dest='course', nargs=1, help='Course to view assignment grades from. UNIMPLEMENTED')
-parser.add_argument('--debug', help='Output debug information')
+parser.add_argument('--debug', default=False, action='store_true', help='Output debug information')
 args = parser.parse_args()
 
 CONFIG_PATH = os.path.expanduser('~') + '/.psc.yml'
@@ -140,11 +140,11 @@ for row in rows:
     print()"""
     classes.append(cls)
 
-# Debug
-print(titles)
-print(grades)
-print(days)
-print(classes)
+if args.debug:
+    print(titles)
+    print(grades)
+    print(days)
+    print(classes)
 
 # Print out table
 # Helper functions
