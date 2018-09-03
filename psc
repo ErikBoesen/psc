@@ -41,7 +41,7 @@ def hash(password, contextdata):
     return hmac.new(contextdata.encode('ascii'), base64.b64encode(hashlib.md5(password.encode('ascii')).digest()).replace(b'=', b''), hashlib.md5).hexdigest()
 
 login_url = 'https://' + config['host'] + '/guardian/home.html'
-login_page = s.get(url)
+login_page = s.get(login_url)
 login_tree = html.fromstring(login_page.text)
 token = list(set(login_tree.xpath('//*[@id=\'LoginForm\']/input[1]/@value')))[0]
 context_data = list(set(login_tree.xpath('//input[@id=\'contextData\']/@value')))[0]
@@ -55,7 +55,7 @@ payload = {
     'account': config['username'],
     'pw': config['password'],
 }
-content = s.post(url, data=payload).content
+content = s.post(login_url, data=payload).content
 
 bs = BeautifulSoup(content, 'lxml')
 table = bs.find('table', class_='linkDescList grid')
