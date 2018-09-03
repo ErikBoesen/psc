@@ -73,7 +73,7 @@ attendance_totals_row = rows.pop()
 header = rows.pop(0)
 header_cells = header.find_all('th')
 titles = [cell.text for cell in header_cells[:4] + header_cells[-2:]]
-grades = [cell.text for cell in header_cells[4:-3]]
+grades = [cell.text for cell in header_cells[4:-2]]
 print(titles)
 print(grades)
 # TODO: Clean up confusing naming
