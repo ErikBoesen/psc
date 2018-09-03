@@ -91,6 +91,15 @@ def clean_period(string: str) -> str:
     else:
         return string[:end]
 
+def clean_grade(string: str) -> str:
+    """
+    Clean nonsense from grade output.
+    """
+    if string in ['[ i ]']:
+        return ''
+    else:
+        return string
+
 classes = []
 for row in rows:
     cls = {}
