@@ -25,16 +25,25 @@ if os.stat(CONFIG_PATH).st_mode & (stat.S_IRGRP | stat.S_IROTH):
 
 # Load PowerSchool login page
 browser = mechanicalsoup.StatefulBrowser()
-browser.open("https://ps.fccps.org")
+browser.set_verbose(2)
+browser.open('https://ps.fccps.org')
 
+buttons = browser.get_current_page().find_all('button')
+for b in buttons:
+    print(b)
 # Fill in login form
-browser.select_form('#LoginForm')
-browser['account'] = 'boesene'
-browser['pw'] = 'you thought'
+form = browser.select_form('#LoginForm')
+print(form.print_summary())
+# so much blood
+form.choose_submit('#btn-powerschool-id')
+browser['account'] = config['username']
+browser['pw'] = config['password']
 resp = browser.submit_selected()
 
 # Verify we're in
 page = browser.get_current_page()
-print(page)
-messages = page.find('td')
-print(messages.text)
+#print(page)
+messages = page.find_all('td')
+print(len(messages))
+for message in messages:
+    print(message.text)
