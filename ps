@@ -9,7 +9,7 @@ browser.open("https://ps.fccps.org")
 browser.select_form('#LoginForm')
 # TODO: Are these name properties or ids?
 browser['account'] = 'boesene'
-browser['password'] = 'you thought'
+browser['pw'] = 'you thought'
 resp = browser.submit_selected()
 
 # Uncomment to launch a web browser on the current page:
