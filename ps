@@ -57,9 +57,26 @@ content = p.content
 bs = BeautifulSoup(content, 'lxml')
 table = bs.find('table', class_='linkDescList grid')
 rows = table.find_all('tr')
+
+# Remove unnecessary "Attendance by Class" header
+table_title = rows.pop(0).text
+
+# While the table headers are intuitive when displayed in a browser, they're actually ordered strangely in the raw HTML.
+# Thus, we need to take the day labels and move them into the line properly.
+# TODO: Clarity
+header = rows.pop(0)
+titles = [cell.text for cell in header.find_all('th')]
+print(titles)
+# TODO: Clean up confusing naming
+days = []
+for day in rows.pop(0).find_all('th'):
+    if day.text not in days:
+        days.append(day.text)
+print(days)
+
 for row in rows:
     #print(row.prettify())
-    for cell in row.find_all(['th', 'td']):
+    for cell in row.find_all('td'):
         print(cell.text, end=' ')
     print()
 
