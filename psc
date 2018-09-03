@@ -66,13 +66,11 @@ rows = table.find_all('tr')
 # TL;DR: If you're making a widely-used web service, MAKE AN API.
 
 # Remove unnecessary "Attendance by Class" header
-table_title = rows.pop(0).text
-# Remove "Attendance Totals" row
-attendance_totals_row = rows.pop()
+rows.pop(0)
+# Remove closing "Attendance Totals" row
+rows.pop()
 
 # While the table headers are intuitive when displayed in a browser, they're actually ordered strangely in the raw HTML.
-# Thus, we need to take the day labels and move them into the line properly.
-# TODO: Clarity
 header = rows.pop(0)
 header_cells = header.find_all('th')
 titles = [cell.text for cell in header_cells[:4] + header_cells[-2:]]
