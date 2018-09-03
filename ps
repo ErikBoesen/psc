@@ -71,8 +71,11 @@ attendance_totals_row = rows.pop()
 # Thus, we need to take the day labels and move them into the line properly.
 # TODO: Clarity
 header = rows.pop(0)
-titles = [cell.text for cell in header.find_all('th')]
+header_cells = header.find_all('th')
+titles = [cell.text for cell in header_cells[:4] + header_cells[-2:]]
+grades = [cell.text for cell in header_cells[4:-3]]
 print(titles)
+print(grades)
 # TODO: Clean up confusing naming
 days = []
 for day in rows.pop(0).find_all('th'):
@@ -108,7 +111,7 @@ for row in rows:
     cls['Teacher Email'] = links[0]['href'][len('mailto:'):]
     cls['Room'] = links[0].nextSibling.strip()[len(' - Rm: '):]
 
-    for cell in cells:
+    for i, cell in enumerate(cells):
         print(cell.text, end=' ')
     print()
     classes.append(cls)
