@@ -141,7 +141,7 @@ print(classes)
 # Print out table
 # Helper functions
 def simplify_attendance(string: str) -> str:
-    return string[0]
+    return string[0] if string else ' '
 
 # Headers
 print('Per'.ljust(3), end=' ')
@@ -157,8 +157,9 @@ print()
 # Content
 for cls in classes:
     print(cls['Exp'].ljust(3), end=' ')
-    print(''.join([cls['Last Week'][day] for day in days]), end=' ')
-    print(''.join([cls['This Week'][day] for day in days]), end=' ')
+    print(''.join([simplify_attendance(cls['Last Week'][day]) for day in days]), end=' ')
+    print(''.join([simplify_attendance(cls['This Week'][day]) for day in days]), end=' ')
+    print()
 
 
 """
