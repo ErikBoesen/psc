@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
-import mechanize
-from bs4 import BeautifulSoup
-import urllib2
-import cookielib
+import mechanicalsoup
 
-cj = cookielib.CookieJar()
-br = mechanize.Browser()
-br.set_cookiejar(cj)
-br.open("https://id.arduino.cc/auth/login/")
+# Connect to duckduckgo
+browser = mechanicalsoup.StatefulBrowser()
+browser.open("https://ps.fccps.org")
 
-br.select_form(nr=0)
-br.form['username'] = 'username'
-br.form['password'] = 'password.'
-br.submit()
+# Fill-in the search form
+browser.select_form('#search_form_homepage')
+browser["q"] = "MechanicalSoup"
+browser.submit_selected()
 
-print(br.response().read())
+# Display the results
+for link in browser.get_current_page().select('a.result__a'):
+    print(link.text, '->', link.attrs['href'])
