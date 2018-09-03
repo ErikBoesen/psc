@@ -105,46 +105,47 @@ def clean_grade(string: str) -> str:
     else:
         return string
 
-classes = []
+courses = []
 for row in rows:
-    cls = {}
+    course = {}
     cells = row.find_all('td')
     # TODO: Clean all periods at end?
     # Store period name
-    cls[titles[0]] = clean_period(cells.pop(0).text)
+    course[titles[0]] = clean_period(cells.pop(0).text)
     # Store Last Week and This Week attendance
-    cls[titles[1]] = {day: cells.pop(0).text.strip() for day in days}
-    cls[titles[2]] = {day: cells.pop(0).text.strip() for day in days}
-    # Deal with class name, teacher, etc.
+    course[titles[1]] = {day: cells.pop(0).text.strip() for day in days}
+    course[titles[2]] = {day: cells.pop(0).text.strip() for day in days}
+    # Deal with course title, teacher, etc.
     course_cell = cells.pop(0)
-    # Get name of class
+    # Get name of course
     # TODO: Better way to get rid of \xa0 than .strip()?
-    cls[titles[3]] = course_cell.find('br').previousSibling.strip()
+    course[titles[3]] = course_cell.find('br').previousSibling.strip()
     links = course_cell.find_all('a')
-    cls['Teacher'] = links.pop(0).text.strip('Details about ')
-    cls['Teacher Email'] = links[0]['href'].strip('mailto:')
-    cls['Room'] = links[0].nextSibling.strip(' - Rm: ')
+    course['Teacher'] = links.pop(0).text.strip('Details about ')
+    course['Teacher Email'] = links[0]['href'].strip('mailto:')
+    course['Room'] = links[0].nextSibling.strip(' - Rm: ')
 
-    cls['Grades'] = {}
+    course['Grades'] = {}
     for grade in grades:
-        cls['Grades'][grade] = clean_grade(cells.pop(0).text.strip())
+        # TODO: Will need to parse letter and number grade
+        course['Grades'][grade] = clean_grade(cells.pop(0).text.strip())
 
     # Absences and Tardies
     # TODO: Throw if the headers are wrong
-    cls[titles[4]] = cells.pop(0).text
-    cls[titles[5]] = cells.pop(0).text
+    course[titles[4]] = cells.pop(0).text
+    course[titles[5]] = cells.pop(0).text
 
     # Debug
     """for i, cell in enumerate(cells):
         print(cell.text, end=' ')
     print()"""
-    classes.append(cls)
+    courses.append(course)
 
 if args.debug:
     print(titles)
     print(grades)
     print(days)
-    print(classes)
+    print(courses)
 
 # Print out table
 # Helper functions
@@ -163,15 +164,15 @@ print('Tar'.ljust(2), end=' ')
 print()
 
 # Content
-for cls in classes:
-    print(cls['Exp'].ljust(3), end=' ')
-    print(''.join([simplify_attendance(cls['Last Week'][day]) for day in days]), end=' ')
-    print(''.join([simplify_attendance(cls['This Week'][day]) for day in days]), end=' ')
-    print(cls['Course'].ljust(30), end=' ')
+for course in courses:
+    print(course['Exp'].ljust(3), end=' ')
+    print(''.join([simplify_attendance(course['Last Week'][day]) for day in days]), end=' ')
+    print(''.join([simplify_attendance(course['This Week'][day]) for day in days]), end=' ')
+    print(course['Course'].ljust(30), end=' ')
     for grade in grades:
-        print(cls['Grades'][grade].ljust(5), end=' ')
-    print(cls['Absences'].ljust(2), end=' ')
-    print(cls['Tardies'].ljust(2), end=' ')
+        print(course['Grades'][grade].ljust(5), end=' ')
+    print(course['Absences'].ljust(2), end=' ')
+    print(course['Tardies'].ljust(2), end=' ')
     print()
 
 
