@@ -19,6 +19,7 @@ parser.add_argument('--debug', default=False, action='store_true', help='Output 
 parser.add_argument('--no-color', default=False, action='store_true', help='Disable colors (UNIMPLEMENTED)')
 args = parser.parse_args()
 
+# Separate credentials from config
 CONFIG_PATH = os.path.expanduser('~') + '/.psc.yml'
 config = {
     # Such as ps.fccps.org
@@ -35,6 +36,16 @@ else:
     config.update({
         # For example, HR and DA
         'ignored_periods': [],
+        'colors': {
+            'course_name': 'cyan',
+            'high_grade': 'green',
+            'medium_grade': 'yellow',
+            'low_grade': 'red',
+        },
+        'thresholds': {
+            'high': 95,
+            'medium': 90,
+        },
     })
     with open(CONFIG_PATH, 'w') as f:
         yaml.dump(config, f)
@@ -174,6 +185,7 @@ for course in courses:
     print(''.join([simplify_attendance(course['This Week'][day]) for day in days]), end=' ')
     print(course['Course'].ljust(30), end=' ')
     for grade in grades:
+        # TODO: Implement colors with thresholds
         print(course['Grades'][grade].ljust(5), end=' ')
     print(course['Absences'].ljust(3), end=' ')
     print(course['Tardies'].ljust(3), end=' ')
