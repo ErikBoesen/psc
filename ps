@@ -160,6 +160,8 @@ for cls in classes:
     print(''.join([simplify_attendance(cls['Last Week'][day]) for day in days]), end=' ')
     print(''.join([simplify_attendance(cls['This Week'][day]) for day in days]), end=' ')
     print(cls['Course'].ljust(30), end=' ')
+    for grade in grades:
+        print(cls['Grades'][grade].ljust(5), end=' ')
     print()
 
 
