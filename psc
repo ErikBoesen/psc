@@ -12,6 +12,8 @@ from lxml import html
 
 CONFIG_PATH = os.path.expanduser('~') + '/.pow.yml'
 config = {
+    # Such as ps.fccps.org
+    'host': '',
     'username': '',
     'password': '',
     # Additional, nonessential properties will be added later if generating config.
