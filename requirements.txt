@@ -1,2 +1,3 @@
-MechanicalSoup
 PyYAML
+requests
+lxml
