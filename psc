@@ -37,6 +37,7 @@ else:
         # For example, HR and DA
         'ignored_periods': [],
         'colors': {
+            'header': 'grey',
             'course_name': 'cyan',
             'high_grade': 'green',
             'medium_grade': 'yellow',
@@ -165,16 +166,15 @@ if args.debug:
 def simplify_attendance(string: str) -> str:
     return string[0] if string else ' '
 
-# Headers
-print('Per'.ljust(3), end=' ')
-for _ in range(2):
-    print(''.join(days), end=' ')
-print('Course'.ljust(30), end=' ')
+# Header
+header_line = ('Per'.ljust(3) + ' ' +
+               (2 * (''.join(days) + ' ')) +
+               'Course'.ljust(30) + ' ')
 for grade in grades:
-    print(grade.ljust(5), end=' ')
-print('Abs'.ljust(3), end=' ')
-print('Tar'.ljust(3), end=' ')
-print()
+    header_line += grade.ljust(5) + ' '
+header_line += 'Abs'.ljust(3) + ' ' + 'Tar'.ljust(3)
+print(header_line)
+print('-' * len(header_line))
 
 # Content
 for course in courses:
