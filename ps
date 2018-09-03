@@ -57,6 +57,10 @@ content = p.content
 bs = BeautifulSoup(content, 'lxml')
 table = bs.find('table', class_='linkDescList grid')
 rows = table.find_all('tr')
+# TODO: This entire parsing system is finnicky and could break at the slightest change to PowerSchool's table layout.
+# Ideally we should do this in some more consistent way.
+# For now though, this is all we can do.
+# TL;DR: If you're making a widely-used web service, MAKE AN API.
 
 # Remove unnecessary "Attendance by Class" header
 table_title = rows.pop(0).text
@@ -88,7 +92,8 @@ classes = []
 for row in rows:
     cls = {}
     cells = row.find_all('td')
-    cls[titles[0]] = cells.pop(0).text
+    # TODO: Clean all periods at end
+    cls[titles[0]] = clean_period(cells.pop(0).text)
     print(cls)
     for cell in cells:
         print(cell.text, end=' ')
