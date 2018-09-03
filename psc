@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 import os
 import yaml
 import stat
@@ -9,6 +10,12 @@ from bs4 import BeautifulSoup
 import hmac, hashlib, base64
 # TODO: Find alternative in existing imports
 from lxml import html
+
+parser = argparse.ArgumentParser(description='View PowerSchool grades from the command line.')
+# TODO: Implement course grade viewing
+parser.add_argument('-c', dest='course', nargs=1, help='Course to view assignment grades from. UNIMPLEMENTED')
+parser.add_argument('--debug', help='Output debug information')
+args = parser.parse_args()
 
 CONFIG_PATH = os.path.expanduser('~') + '/.psc.yml'
 config = {
