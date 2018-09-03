@@ -165,6 +165,8 @@ print()
 
 # Content
 for course in courses:
+    if course['Exp'] in config['ignored_periods']:
+        continue
     print(course['Exp'].ljust(3), end=' ')
     print(''.join([simplify_attendance(course['Last Week'][day]) for day in days]), end=' ')
     print(''.join([simplify_attendance(course['This Week'][day]) for day in days]), end=' ')
