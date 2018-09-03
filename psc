@@ -115,9 +115,9 @@ for row in rows:
     # TODO: Better way to get rid of \xa0 than .strip()?
     cls[titles[3]] = course_cell.find('br').previousSibling.strip()
     links = course_cell.find_all('a')
-    cls['Teacher'] = links.pop(0).text[len('Details about '):]
-    cls['Teacher Email'] = links[0]['href'][len('mailto:'):]
-    cls['Room'] = links[0].nextSibling.strip()[len(' - Rm: '):]
+    cls['Teacher'] = links.pop(0).text.strip('Details about ')
+    cls['Teacher Email'] = links[0]['href'].strip('mailto:')
+    cls['Room'] = links[0].nextSibling.strip(' - Rm: ')
 
     cls['Grades'] = {}
     for grade in grades:
