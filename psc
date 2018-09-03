@@ -10,7 +10,7 @@ import hmac, hashlib, base64
 # TODO: Find alternative in existing imports
 from lxml import html
 
-CONFIG_PATH = os.path.expanduser('~') + '/.pow.yml'
+CONFIG_PATH = os.path.expanduser('~') + '/.psc.yml'
 config = {
     # Such as ps.fccps.org
     'host': '',
@@ -93,7 +93,6 @@ def clean_grade(string: str) -> str:
     """
     Clean nonsense from grade output.
     """
-    #return string # debug, for showing that grade output works
     if string in ['[ i ]']:
         return ''
     else:
