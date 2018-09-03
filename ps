@@ -111,6 +111,9 @@ for row in rows:
     cls['Teacher Email'] = links[0]['href'][len('mailto:'):]
     cls['Room'] = links[0].nextSibling.strip()[len(' - Rm: '):]
 
+    cls['Grades'] = {}
+    for grade in grades:
+        cls['Grades'][grade] = cells.pop(0).text.strip()
     for i, cell in enumerate(cells):
         print(cell.text, end=' ')
     print()
