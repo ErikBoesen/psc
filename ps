@@ -60,6 +60,8 @@ rows = table.find_all('tr')
 
 # Remove unnecessary "Attendance by Class" header
 table_title = rows.pop(0).text
+# Remove "Attendance Totals" row
+attendance_totals_row = rows.pop()
 
 # While the table headers are intuitive when displayed in a browser, they're actually ordered strangely in the raw HTML.
 # Thus, we need to take the day labels and move them into the line properly.
@@ -74,9 +76,21 @@ for day in rows.pop(0).find_all('th'):
         days.append(day.text)
 print(days)
 
+def clean_period(string: str) -> str:
+    # TODO: Make optional
+    end = string.find('(')
+    if end < 0:
+        return string
+    else:
+        return string[:end]
+
+classes = []
 for row in rows:
-    #print(row.prettify())
-    for cell in row.find_all('td'):
+    cls = {}
+    cells = row.find_all('td')
+    cls[titles[0]] = cells.pop(0).text
+    print(cls)
+    for cell in cells:
         print(cell.text, end=' ')
     print()
 
