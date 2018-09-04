@@ -224,12 +224,17 @@ class PowerSchool:
             print()
 
     def get_course(self, period, marking_period=None):
-        print(period)
-        print(marking_period)
         course = next((course for course in self.courses if course['Exp'] == period), None)
+        # TODO: What does it do when you don't give a marking period?
         raw_content = self.session.get('https://' + self.host + '/guardian/scores.html?frn=' + course['ID'] + (('&fg=' + marking_period) if marking_period else '')).content
         bs = BeautifulSoup(raw_content, 'lxml')
-        print(bs.find('table'))
+        meta_table = bs.find('table', {'class': 'linkDescList'})
+        print(meta_table)
+        meta_fields = meta_table.find_all('tr')[1].find_all('td')
+        meta = {}
+        meta['Course'] = meta_fields[0].text
+
+        print(meta)
 
 ps = PowerSchool(config['host'], config['username'], config['password'])
 if args.period:
