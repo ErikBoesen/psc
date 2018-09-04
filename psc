@@ -58,108 +58,116 @@ else:
 if os.stat(CONFIG_PATH).st_mode & (stat.S_IRGRP | stat.S_IROTH):
     print('Warning: config file may be accessible by other users.', file=sys.stderr)
 
-s = requests.Session()
+class PowerSchool:
+    s = requests.Session()
+    def __init__(self, host, username, password):
 
-login_url = 'https://' + config['host'] + '/guardian/home.html'
-login_page = s.get(login_url)
-login_tree = html.fromstring(login_page.text)
-token = list(set(login_tree.xpath('//*[@id=\'LoginForm\']/input[1]/@value')))[0]
-context_data = list(set(login_tree.xpath('//input[@id=\'contextData\']/@value')))[0]
-password_hash = hmac.new(context_data.encode('ascii'),
-                         base64.b64encode(hashlib.md5(config['password'].encode('ascii')).digest()).replace(b'=', b''),
-                         hashlib.md5).hexdigest()
+        login_url = 'https://' + config['host'] + '/guardian/home.html'
+        login_page = this.s.get(login_url)
+        login_tree = html.fromstring(login_page.text)
+        token = list(set(login_tree.xpath('//*[@id=\'LoginForm\']/input[1]/@value')))[0]
+        context_data = list(set(login_tree.xpath('//input[@id=\'contextData\']/@value')))[0]
+        password_hash = hmac.new(context_data.encode('ascii'),
+                                 base64.b64encode(hashlib.md5(config['password'].encode('ascii')).digest()).replace(b'=', b''),
+                                 hashlib.md5).hexdigest()
 
-payload = {
-    'pstoken': token,
-    'contextData': context_data,
-    'dbpw': password_hash,
-    'ldappassword': config['password'],
-    'account': config['username'],
-    'pw': config['password'],
-}
-content = s.post(login_url, data=payload).content
+        payload = {
+            'pstoken': token,
+            'contextData': context_data,
+            'dbpw': password_hash,
+            'ldappassword': password,
+            'account': username,
+            'pw': password,
+        }
+        content = s.post(login_url, data=payload).content
 
-bs = BeautifulSoup(content, 'lxml')
-table = bs.find('table', class_='linkDescList grid')
-rows = table.find_all('tr')
-# TODO: This entire parsing system is finnicky and could break at the slightest change to PowerSchool's table layout.
-# Ideally we should do this in some more consistent way.
-# For now though, this is all we can do.
-# TL;DR: If you're making a widely-used web service, MAKE AN API.
+        bs = BeautifulSoup(content, 'lxml')
+        table = bs.find('table', class_='linkDescList grid')
+        rows = table.find_all('tr')
 
-# Remove unnecessary "Attendance by Class" header
-rows.pop(0)
-# Remove closing "Attendance Totals" row
-rows.pop()
+        # TODO: This entire parsing system is finnicky and could break at the slightest change to PowerSchool's table layout.
+        # Ideally we should do this in some more consistent way.
+        # For now though, this is all we can do.
+        # TL;DR: If you're making a widely-used web service, MAKE AN API.
 
-# While the table headers are intuitive when displayed in a browser, they're actually ordered strangely in the raw HTML.
-header = rows.pop(0)
-header_cells = header.find_all('th')
-titles = [cell.text for cell in header_cells[:4] + header_cells[-2:]]
-grades = [cell.text for cell in header_cells[4:-2]]
-# TODO: Clean up confusing naming
-days = []
-for day in rows.pop(0).find_all('th'):
-    if day.text not in days:
-        days.append(day.text)
+        # Remove unnecessary "Attendance by Class" header
+        rows.pop(0)
+        # Remove closing "Attendance Totals" row
+        rows.pop()
 
-def clean_period(string: str) -> str:
-    # TODO: Make optional
-    end = string.find('(')
-    if end < 0:
-        return string
-    else:
-        return string[:end]
+        # While the table headers are intuitive when displayed in a browser, they're actually ordered strangely in the raw HTML.
+        header = rows.pop(0)
+        header_cells = header.find_all('th')
+        titles = [cell.text for cell in header_cells[:4] + header_cells[-2:]]
+        grades = [cell.text for cell in header_cells[4:-2]]
+        # TODO: Clean up confusing naming
+        days = []
+        for day in rows.pop(0).find_all('th'):
+            if day.text not in days:
+                days.append(day.text)
 
-def clean_grade(string: str) -> str:
-    """
-    Clean nonsense from grade output.
-    """
-    if string in ['[ i ]']:
-        return ''
-    else:
-        return string
+        courses = []
+        for row in rows:
+            course = {}
+            cells = row.find_all('td')
+            # TODO: Clean all periods at end?
+            # Store period name
+            course[titles[0]] = clean_period(cells.pop(0).text)
+            # Store Last Week and This Week attendance
+            course[titles[1]] = {day: cells.pop(0).text.strip() for day in days}
+            course[titles[2]] = {day: cells.pop(0).text.strip() for day in days}
+            # Deal with course title, teacher, etc.
+            course_cell = cells.pop(0)
+            # Get name of course
+            course[titles[3]] = course_cell.find('br').previousSibling.strip()
+            links = course_cell.find_all('a')
+            course['Teacher'] = links.pop(0).text.strip('Details about ')
+            course['Teacher Email'] = links[0]['href'].strip('mailto:')
+            course['Room'] = links[0].nextSibling.strip(' - Rm: ')
 
-courses = []
-for row in rows:
-    course = {}
-    cells = row.find_all('td')
-    # TODO: Clean all periods at end?
-    # Store period name
-    course[titles[0]] = clean_period(cells.pop(0).text)
-    # Store Last Week and This Week attendance
-    course[titles[1]] = {day: cells.pop(0).text.strip() for day in days}
-    course[titles[2]] = {day: cells.pop(0).text.strip() for day in days}
-    # Deal with course title, teacher, etc.
-    course_cell = cells.pop(0)
-    # Get name of course
-    course[titles[3]] = course_cell.find('br').previousSibling.strip()
-    links = course_cell.find_all('a')
-    course['Teacher'] = links.pop(0).text.strip('Details about ')
-    course['Teacher Email'] = links[0]['href'].strip('mailto:')
-    course['Room'] = links[0].nextSibling.strip(' - Rm: ')
+            course['Grades'] = {}
+            for grade in grades:
+                # TODO: Will need to parse letter and number grade
+                course['Grades'][grade] = clean_grade(cells.pop(0).text.strip())
 
-    course['Grades'] = {}
-    for grade in grades:
-        # TODO: Will need to parse letter and number grade
-        course['Grades'][grade] = clean_grade(cells.pop(0).text.strip())
+            # Absences and Tardies
+            # TODO: Throw if the headers are wrong
+            course[titles[4]] = cells.pop(0).text
+            course[titles[5]] = cells.pop(0).text
 
-    # Absences and Tardies
-    # TODO: Throw if the headers are wrong
-    course[titles[4]] = cells.pop(0).text
-    course[titles[5]] = cells.pop(0).text
+            # Debug
+            """for i, cell in enumerate(cells):
+                print(cell.text, end=' ')
+            print()"""
+            courses.append(course)
 
-    # Debug
-    """for i, cell in enumerate(cells):
-        print(cell.text, end=' ')
-    print()"""
-    courses.append(course)
+        if args.debug:
+            print(titles)
+            print(grades)
+            print(days)
+            print(courses)
 
-if args.debug:
-    print(titles)
-    print(grades)
-    print(days)
-    print(courses)
+        self.titles = titles
+        self.grades = grades
+        self.days = days
+        self.courses = courses
+
+    def clean_period(string: str) -> str:
+        # TODO: Make optional
+        end = string.find('(')
+        if end < 0:
+            return string
+        else:
+            return string[:end]
+
+    def clean_grade(string: str) -> str:
+        """
+        Clean nonsense from grade output.
+        """
+        if string in ['[ i ]']:
+            return ''
+        else:
+            return string
 
 # Print out table
 # Helper functions
