@@ -59,11 +59,11 @@ if os.stat(CONFIG_PATH).st_mode & (stat.S_IRGRP | stat.S_IROTH):
     print('Warning: config file may be accessible by other users.', file=sys.stderr)
 
 class PowerSchool:
-    s = requests.Session()
+    session = requests.Session()
     def __init__(self, host, username, password):
 
         login_url = 'https://' + config['host'] + '/guardian/home.html'
-        login_page = self.s.get(login_url)
+        login_page = self.session.get(login_url)
         login_tree = html.fromstring(login_page.text)
         token = list(set(login_tree.xpath('//*[@id=\'LoginForm\']/input[1]/@value')))[0]
         context_data = list(set(login_tree.xpath('//input[@id=\'contextData\']/@value')))[0]
@@ -79,7 +79,7 @@ class PowerSchool:
             'account': username,
             'pw': password,
         }
-        content = self.s.post(login_url, data=payload).content
+        content = self.session.post(login_url, data=payload).content
 
         bs = BeautifulSoup(content, 'lxml')
         table = bs.find('table', class_='linkDescList grid')
