@@ -61,9 +61,17 @@ if os.stat(CONFIG_PATH).st_mode & (stat.S_IRGRP | stat.S_IROTH):
 
 class PowerSchool:
     session = requests.Session()
-    def __init__(self, host, username, password):
 
-        login_url = 'https://' + config['host'] + '/guardian/home.html'
+    host: str
+    username: str
+    password: str
+
+    def __init__(self, host, username, password):
+        self.host = host
+        self.username = username
+        self.password = password
+
+        login_url = 'https://' + self.host + '/guardian/home.html'
         login_page = self.session.get(login_url)
         login_tree = html.fromstring(login_page.text)
         token = list(set(login_tree.xpath('//*[@id=\'LoginForm\']/input[1]/@value')))[0]
