@@ -275,46 +275,8 @@ else:
     ps.print_grades()
 
 """
-def createSmallClass(teacher, grade):
-    data={}
-    data['teacher']=teacher
-    data['grade']=grade
-    return data
-def getRawClass(p):
-    x={}
-    data=BeautifulSoup(p.content, 'lxml')
-    grades=data.findAll('a', { 'class' : 'bold' })
-    tr=data.findAll('tr', {'id':re.compile('^ccid_\d+')})
-    for i in range (0,6):
-        td=tr[i].findAll('td')
-        grade=td[len(td)-3]
-        a=list(grade.find('a').getText())
-        del a[0]
-        a=''.join(a)
-        teacher=tr[i].find('span',{ 'class' : 'screen_readers_only' }).parent['title'].strip('Details about ').replace(',','').split(' ')
-        teacher.reverse()
-        if(len(teacher)==3):
-            del teacher[0]
-        teacher= ' '.join(teacher)
-        x['{}'.format(i+1)]=createSmallClass(teacher, a)
-    return x
-def createSmallAssignment(date, category, name, score, percent):
-    data={}
-    data['date']=date
-    data['category']=category
-    data['name']=name
-    data['score']=score
-    data['percent']=percent
-    return data
 def getRawAssignments(p,period):
-    data=BeautifulSoup(p.content, 'lxml')
-    grades=data.findAll('a', { 'class' : 'bold' })
-    tr=data.findAll('tr', {'id':re.compile('^ccid_\d+')})
-    td=tr[period-1].findAll('td')
-    grade=td[len(td)-3]
-    a=list(grade.find('a').getText())
-    href='https://powerschool.sandi.net/guardian/'+grade.find('a')['href']
-
+    ...
     p=s.get(href, headers = {'Accept-Encoding': 'identity'})
     data=BeautifulSoup(p.content, 'lxml')
     table=data.find('table', { 'align' : 'center' })
@@ -325,22 +287,4 @@ def getRawAssignments(p,period):
         assignments['{}'.format(hex(i))]=createSmallAssignment(td[0].getText(),td[1].getText(),td[2].getText(),td[8].getText(),td[9].getText())
     return assignments
     return all
-def getAllClass(p,period):
-    data={}
-    data['{}'.format(period)]=getRawAssignments(p,period)
-    data['assignments']=data.pop('{}'.format(period))
-    data['info']=getRawClass(p)['{}'.format(period)]
-    return data
-def getAllAssignments(p):
-    data={}
-    for i in range(1,7):
-        data['{}'.format(i)]=getRawAssignments(p,i)
-    return data
-def getAllGrades(p):
-    data={}
-    for i in range(1,7):
-        data['{}'.format(i)]=getAllClass(p,i)
-    return data
-def printJSON(data):
-    print(json.dumps(data))
 """
