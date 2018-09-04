@@ -112,7 +112,7 @@ class PowerSchool:
             cells = row.find_all('td')
             # TODO: Clean all periods at end?
             # Store period name
-            course[titles[0]] = self.clean_period(cells.pop(0).text)
+            course[titles[0]] = self._clean_period(cells.pop(0).text)
             # Store Last Week and This Week attendance
             course[titles[1]] = {day: cells.pop(0).text.strip() for day in days}
             course[titles[2]] = {day: cells.pop(0).text.strip() for day in days}
@@ -128,7 +128,7 @@ class PowerSchool:
             course['Grades'] = {}
             for grade in grades:
                 # TODO: Will need to parse letter and number grade
-                course['Grades'][grade] = self.clean_grade(cells.pop(0).text.strip())
+                course['Grades'][grade] = self._clean_grade(cells.pop(0).text.strip())
 
             # Absences and Tardies
             # TODO: Throw if the headers are wrong
@@ -152,7 +152,7 @@ class PowerSchool:
         self.days = days
         self.courses = courses
 
-    def clean_period(self, string: str) -> str:
+    def _clean_period(self, string: str) -> str:
         # TODO: Make optional
         end = string.find('(')
         if end < 0:
@@ -160,7 +160,7 @@ class PowerSchool:
         else:
             return string[:end]
 
-    def clean_grade(self, string: str) -> str:
+    def _clean_grade(self, string: str) -> str:
         """
         Clean nonsense from grade output.
         """
@@ -171,7 +171,7 @@ class PowerSchool:
 
     # Print out table
     # Helper functions
-    def simplify_attendance(self, string: str) -> str:
+    def _simplify_attendance(self, string: str) -> str:
         return string[0] if string else ' '
 
     def print_grades(self):
@@ -198,8 +198,8 @@ class PowerSchool:
             if course['Exp'] in config['ignored_periods']:
                 continue
             print(course['Exp'].ljust(3), end=' ')
-            print(''.join([self.simplify_attendance(course['Last Week'][day]) for day in days]), end=' ')
-            print(''.join([self.simplify_attendance(course['This Week'][day]) for day in days]), end=' ')
+            print(''.join([self._simplify_attendance(course['Last Week'][day]) for day in days]), end=' ')
+            print(''.join([self._simplify_attendance(course['This Week'][day]) for day in days]), end=' ')
             print(colored(course['Course'].ljust(30), config['colors']['course_name']), end=' ')
             for grade in grades:
                 # TODO: Implement colors with thresholds
