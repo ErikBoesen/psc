@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import os
+import re
 import yaml
 import stat
 import sys
@@ -127,8 +128,13 @@ class PowerSchool:
 
             course['Grades'] = {}
             for grade in grades:
+                grade_cell = cells.pop(0)
+                if grade_cell.find('a'):
+                    course_id = grade_cell.find('a')['href'].strip('scores.html?frn=')
+                    course_id = course_id[:course_id.find('&')]
+                    course['ID'] = course_id
                 # TODO: Will need to parse letter and number grade
-                course['Grades'][grade] = self._clean_grade(cells.pop(0).text.strip())
+                course['Grades'][grade] = self._clean_grade(grade_cell.text.strip())
 
             # Absences and Tardies
             # TODO: Throw if the headers are wrong
