@@ -36,6 +36,7 @@ else:
     config.update({
         # For example, HR and DA
         'ignored_periods': [],
+        'ignored_marking_periods': [],
         'colors': {
             'header': 'grey',
             'course_name': 'cyan',
@@ -165,6 +166,9 @@ if args.debug:
 # Helper functions
 def simplify_attendance(string: str) -> str:
     return string[0] if string else ' '
+
+# Remove ignored marking periods from grade list
+grades = [grade for grade in grades if grade not in config['ignored_marking_periods']]
 
 # Header
 header_line = ('Per'.ljust(3) + ' ' +
