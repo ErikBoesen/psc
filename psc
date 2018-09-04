@@ -241,7 +241,30 @@ class PowerSchool:
         # TODO: you could just check if this is empty and only then get the real output then, I guess?
 
 
-
+        # TOTALLY BROKEN
+        # Seems like the assignments table is generated through JavaScript. This may be an issue...
+        # TODO
+        assignments_table = bs.find_all('table')
+        print(assignments_table)
+        assignments_tbody = assignments_table.find('tbody')
+        assignments_raw = assignments_tbody.find_all('tr')
+        assignments_raw.pop()
+        assignments = {}
+        for assignment in assignments_raw:
+            cells = assignment.find_all('td')
+            assignments.append({
+                'Due Date': cells[0].text,
+                'Category': cells[1].text,
+                'Assignment': cells[2].text,
+                # TODO: Implement flags
+                #'Flags': cells[3].text,
+                'Score': cells[4].text,
+                '%': cells[5].text,
+                'Grade': cells[6].text,
+                # Not really sure what this column is supposed to be
+                # TODO
+                #'Comments': cells[7].text,
+            })
 
         print(meta)
 
