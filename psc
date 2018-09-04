@@ -224,14 +224,16 @@ class PowerSchool:
             print()
 
     def get_course(self, period, marking_period=None):
+        print(period)
+        print(marking_period)
         course = next((course for course in self.courses if course['Exp'] == period), None)
         raw_content = self.session.get('https://' + self.host + '/guardian/scores.html?frn=' + course['ID'] + (('&fg=' + marking_period) if marking_period else '')).content
         bs = BeautifulSoup(raw_content, 'lxml')
         print(bs.find('table'))
 
 ps = PowerSchool(config['host'], config['username'], config['password'])
-if args.course:
-
+if args.period:
+    ps.get_course(args.period, args.marking_period)
 else:
     ps.print_grades()
 
