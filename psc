@@ -124,7 +124,7 @@ class PowerSchool:
             links = course_cell.find_all('a')
             course['Teacher'] = links.pop(0).text.strip('Details about ')
             course['Teacher Email'] = links[0]['href'].strip('mailto:')
-            course['Room'] = links[0].nextSibling.strip(' - Rm: ')
+            course['Room'] = links[0].nextSibling.strip('\xa0-\xa0Rm: ')
 
             course['Grades'] = {}
             for grade in grades:
