@@ -63,7 +63,7 @@ class PowerSchool:
     def __init__(self, host, username, password):
 
         login_url = 'https://' + config['host'] + '/guardian/home.html'
-        login_page = this.s.get(login_url)
+        login_page = self.s.get(login_url)
         login_tree = html.fromstring(login_page.text)
         token = list(set(login_tree.xpath('//*[@id=\'LoginForm\']/input[1]/@value')))[0]
         context_data = list(set(login_tree.xpath('//input[@id=\'contextData\']/@value')))[0]
@@ -79,7 +79,7 @@ class PowerSchool:
             'account': username,
             'pw': password,
         }
-        content = s.post(login_url, data=payload).content
+        content = self.s.post(login_url, data=payload).content
 
         bs = BeautifulSoup(content, 'lxml')
         table = bs.find('table', class_='linkDescList grid')
@@ -112,7 +112,7 @@ class PowerSchool:
             cells = row.find_all('td')
             # TODO: Clean all periods at end?
             # Store period name
-            course[titles[0]] = clean_period(cells.pop(0).text)
+            course[titles[0]] = self.clean_period(cells.pop(0).text)
             # Store Last Week and This Week attendance
             course[titles[1]] = {day: cells.pop(0).text.strip() for day in days}
             course[titles[2]] = {day: cells.pop(0).text.strip() for day in days}
@@ -128,7 +128,7 @@ class PowerSchool:
             course['Grades'] = {}
             for grade in grades:
                 # TODO: Will need to parse letter and number grade
-                course['Grades'][grade] = clean_grade(cells.pop(0).text.strip())
+                course['Grades'][grade] = self.clean_grade(cells.pop(0).text.strip())
 
             # Absences and Tardies
             # TODO: Throw if the headers are wrong
@@ -152,7 +152,7 @@ class PowerSchool:
         self.days = days
         self.courses = courses
 
-    def clean_period(string: str) -> str:
+    def clean_period(self, string: str) -> str:
         # TODO: Make optional
         end = string.find('(')
         if end < 0:
@@ -160,7 +160,7 @@ class PowerSchool:
         else:
             return string[:end]
 
-    def clean_grade(string: str) -> str:
+    def clean_grade(self, string: str) -> str:
         """
         Clean nonsense from grade output.
         """
@@ -169,39 +169,51 @@ class PowerSchool:
         else:
             return string
 
-# Print out table
-# Helper functions
-def simplify_attendance(string: str) -> str:
-    return string[0] if string else ' '
+    # Print out table
+    # Helper functions
+    def simplify_attendance(self, string: str) -> str:
+        return string[0] if string else ' '
 
-# Remove ignored marking periods from grade list
-grades = [grade for grade in grades if grade not in config['ignored_marking_periods']]
+    def print_grades(self):
+        titles = self.titles
+        grades = self.grades
+        days = self.days
+        courses = self.courses
 
-# Header
-header_line = ('Per'.ljust(3) + ' ' +
-               (2 * (''.join(days) + ' ')) +
-               'Course'.ljust(30) + ' ')
-for grade in grades:
-    header_line += grade.ljust(5) + ' '
-header_line += 'Abs'.ljust(3) + ' ' + 'Tar'.ljust(3)
-print(header_line)
-print('-' * len(header_line))
+        # Remove ignored marking periods from grade list
+        grades = [grade for grade in self.grades if grade not in config['ignored_marking_periods']]
 
-# Content
-for course in courses:
-    if course['Exp'] in config['ignored_periods']:
-        continue
-    print(course['Exp'].ljust(3), end=' ')
-    print(''.join([simplify_attendance(course['Last Week'][day]) for day in days]), end=' ')
-    print(''.join([simplify_attendance(course['This Week'][day]) for day in days]), end=' ')
-    print(colored(course['Course'].ljust(30), config['colors']['course_name']), end=' ')
-    for grade in grades:
-        # TODO: Implement colors with thresholds
-        print(course['Grades'][grade].ljust(5), end=' ')
-    print(course['Absences'].ljust(3), end=' ')
-    print(course['Tardies'].ljust(3), end=' ')
-    print()
+        # Header
+        header_line = ('Per'.ljust(3) + ' ' +
+                       (2 * (''.join(days) + ' ')) +
+                       'Course'.ljust(30) + ' ')
+        for grade in grades:
+            header_line += grade.ljust(5) + ' '
+        header_line += 'Abs'.ljust(3) + ' ' + 'Tar'.ljust(3)
+        print(header_line)
+        print('-' * len(header_line))
 
+        # Content
+        for course in courses:
+            if course['Exp'] in config['ignored_periods']:
+                continue
+            print(course['Exp'].ljust(3), end=' ')
+            print(''.join([self.simplify_attendance(course['Last Week'][day]) for day in days]), end=' ')
+            print(''.join([self.simplify_attendance(course['This Week'][day]) for day in days]), end=' ')
+            print(colored(course['Course'].ljust(30), config['colors']['course_name']), end=' ')
+            for grade in grades:
+                # TODO: Implement colors with thresholds
+                print(course['Grades'][grade].ljust(5), end=' ')
+            print(course['Absences'].ljust(3), end=' ')
+            print(course['Tardies'].ljust(3), end=' ')
+            print()
+
+ps = PowerSchool(config['host'], config['username'], config['password'])
+if args.course:
+    # Do course things
+    pass
+else:
+    ps.print_grades()
 
 """
 def createSmallClass(teacher, grade):
