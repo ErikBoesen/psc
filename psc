@@ -229,10 +229,19 @@ class PowerSchool:
         raw_content = self.session.get('https://' + self.host + '/guardian/scores.html?frn=' + course['ID'] + (('&fg=' + marking_period) if marking_period else '')).content
         bs = BeautifulSoup(raw_content, 'lxml')
         meta_table = bs.find('table', {'class': 'linkDescList'})
-        print(meta_table)
         meta_fields = meta_table.find_all('tr')[1].find_all('td')
         meta = {}
         meta['Course'] = meta_fields[0].text
+        meta['Teacher'] = meta_fields[1].text
+        meta['Expression'] = meta_fields[2].text
+        # TODO: This is a bunch of JavaScript when it's normally _ _%. For now we will just use the stat we already have.
+        #meta['Final Grade'] = meta_fields[3].text
+        # Breaks when not given a marking period...
+        meta['Final Grade'] = course['Grades'][marking_period]
+        # TODO: you could just check if this is empty and only then get the real output then, I guess?
+
+
+
 
         print(meta)
 
