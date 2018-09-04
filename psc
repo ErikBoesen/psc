@@ -133,7 +133,6 @@ for row in rows:
     # Deal with course title, teacher, etc.
     course_cell = cells.pop(0)
     # Get name of course
-    # TODO: Better way to get rid of \xa0 than .strip()?
     course[titles[3]] = course_cell.find('br').previousSibling.strip()
     links = course_cell.find_all('a')
     course['Teacher'] = links.pop(0).text.strip('Details about ')
