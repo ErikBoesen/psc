@@ -135,15 +135,26 @@ class PowerSchool:
             course['Teacher Email'] = links[0]['href'][len('mailto:'):]
             course['Room'] = links[0].nextSibling[len('\xa0-\xa0Rm: '):]
 
+            course['Letter Grades'] = {}
             course['Grades'] = {}
+            # TODO: 'grades' is actually a list of marking periods. Maybe use a more intuitive name?
             for grade in grades:
                 grade_cell = cells.pop(0)
                 if grade_cell.find('a'):
                     course_id = grade_cell.find('a')['href'].strip('scores.html?frn=')
                     course_id = course_id[:course_id.find('&')]
                     course['ID'] = course_id
-                # TODO: Will need to parse letter and number grade
-                course['Grades'][grade] = self._clean_grade(grade_cell.text.strip())
+                # TODO: This is a complete shot in the dark. I have no idea how grades are formatted in the table.
+                # This is just my best guess based on the class meta format.
+
+                # If no grade is in yet, put it in empty.
+                raw = self._clean_grade(grade_cell.text.strip())
+                if not raw:
+                    # TODO: It would be better to set them to None than to an empty string...
+                    course['Letter Grades'][grade] = course['Grades'][grade] = raw
+                else:
+                    course['Letter Grades'][grade] = grade_cell.find('br').previousSibling.strip()
+                    course['Grades'][grade] = int(grade_cell.find('br').nextSibling.strip().strip('%'))
 
             # Absences and Tardies
             # TODO: Throw if the headers are wrong
