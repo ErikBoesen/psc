@@ -1,4 +1,5 @@
 PyYAML
+beautifulsoup4
 requests
 lxml
 termcolor
