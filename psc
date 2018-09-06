@@ -33,6 +33,9 @@ else:
     credentials['username'] = input('username: ')
     from getpass import getpass
     credentials['password'] = getpass('password: ')
+    with open(CREDENTIALS_PATH, 'w') as f:
+        yaml.dump(credentials, f)
+    os.chmod(CREDENTIALS_PATH, stat.S_IRUSR | stat.S_IWUSR)
 
 CONFIG_PATH = os.path.expanduser('~') + '/.psc.yml'
 config = {
