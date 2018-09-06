@@ -21,13 +21,23 @@ parser.add_argument('--debug', default=False, action='store_true', help='Output 
 parser.add_argument('--no-color', default=False, action='store_true', help='Disable colors (UNIMPLEMENTED)')
 args = parser.parse_args()
 
-# Separate credentials from config
+CREDENTIALS_PATH = os.path.expanduser('~') + '/.psc_credentials.yml'
+credentials = {
+    'username': '',
+    'password': '',
+}
+if os.path.isfile(CREDENTIALS_PATH) and os.path.getsize(CREDENTIALS_PATH) is not 0:
+    with open(CREDENTIALS_PATH, 'r') as f:
+        credentials = yaml.load(f)
+else:
+    credentials['username'] = input('username: ')
+    from getpass import getpass
+    credentials['password'] = getpass('password: ')
+
 CONFIG_PATH = os.path.expanduser('~') + '/.psc.yml'
 config = {
     # Such as ps.fccps.org
     'host': '',
-    'username': '',
-    'password': '',
     # Additional, nonessential properties will be added later if generating config.
 }
 if os.path.isfile(CONFIG_PATH) and os.path.getsize(CONFIG_PATH) is not 0:
@@ -279,7 +289,7 @@ class PowerSchool:
 
         print(meta)
 
-ps = PowerSchool(config['host'], config['username'], config['password'])
+ps = PowerSchool(config['host'], credentials['username'], credentials['password'])
 if args.period:
     ps.get_course(args.period, args.marking_period)
 else:
