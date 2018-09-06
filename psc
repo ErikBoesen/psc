@@ -37,6 +37,11 @@ else:
         yaml.dump(credentials, f)
     os.chmod(CREDENTIALS_PATH, stat.S_IRUSR | stat.S_IWUSR)
 
+# Check if group or public can read config and the private details therein.
+# If so, warn user.
+if os.stat(CREDENTIALS_PATH).st_mode & (stat.S_IRGRP | stat.S_IROTH):
+    print('Warning: config file may be accessible by other users.', file=sys.stderr)
+
 CONFIG_PATH = os.path.expanduser('~') + '/.psc.yml'
 config = {
     # Such as ps.fccps.org
@@ -66,12 +71,6 @@ else:
     })
     with open(CONFIG_PATH, 'w') as f:
         yaml.dump(config, f)
-    os.chmod(CONFIG_PATH, stat.S_IRUSR | stat.S_IWUSR)
-
-# Check if group or public can read config and the private details therein.
-# If so, warn user.
-if os.stat(CONFIG_PATH).st_mode & (stat.S_IRGRP | stat.S_IROTH):
-    print('Warning: config file may be accessible by other users.', file=sys.stderr)
 
 class PowerSchool:
     session = requests.Session()
