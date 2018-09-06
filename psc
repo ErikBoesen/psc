@@ -78,16 +78,16 @@ class PowerSchool:
         token = list(set(login_tree.xpath('//*[@id=\'LoginForm\']/input[1]/@value')))[0]
         context_data = list(set(login_tree.xpath('//input[@id=\'contextData\']/@value')))[0]
         password_hash = hmac.new(context_data.encode('ascii'),
-                                 base64.b64encode(hashlib.md5(config['password'].encode('ascii')).digest()).replace(b'=', b''),
+                                 base64.b64encode(hashlib.md5(self.password.encode('ascii')).digest()).replace(b'=', b''),
                                  hashlib.md5).hexdigest()
 
         payload = {
             'pstoken': token,
             'contextData': context_data,
             'dbpw': password_hash,
-            'ldappassword': password,
-            'account': username,
-            'pw': password,
+            'ldappassword': self.password,
+            'account': self.username,
+            'pw': self.password,
         }
         content = self.session.post(login_url, data=payload).content
 
