@@ -220,6 +220,7 @@ class PowerSchool:
 
         # Remove ignored marking periods from grade list
         grades = [grade for grade in self.grades if grade not in config['ignored_marking_periods']]
+        grades = [grade for grade in      grades if True in [True for course in courses if course['Grades'][grade]]]
 
         # Header
         header_line = ('Per'.ljust(3) + ' ' +
