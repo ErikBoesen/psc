@@ -61,9 +61,9 @@ else:
         'colors': {
             'header': 'grey',
             'course_name': 'cyan',
-            'high_grade': 'green',
-            'medium_grade': 'yellow',
-            'low_grade': 'red',
+            'high_grade': 'on_green',
+            'medium_grade': 'on_yellow',
+            'low_grade': 'on_red',
         },
         'thresholds': {
             'high': 95,
