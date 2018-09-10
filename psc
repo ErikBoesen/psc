@@ -249,7 +249,7 @@ class PowerSchool:
                 numerical = course['Grades'][grade]
                 if not numerical:
                     # There's no grade in
-                    print(' ' * 5, end=' ')
+                    print(' ' * 6, end=' ')
                 else:
                     if numerical >= config['thresholds']['high']:
                         color = config['colors']['high_grade']
@@ -258,7 +258,7 @@ class PowerSchool:
                     else:
                         color = config['colors']['low_grade']
                     # TODO: Make sure white color supports black-on-white terminals
-                    print(colored(('%s/%d' % (course['Letter Grades'][grade], course['Grades'][grade])).ljust(5), 'white', color), end=' ')
+                    print(colored(('%s/%d' % (course['Letter Grades'][grade], course['Grades'][grade])).ljust(6), 'grey', color), end=' ')
             print(course['Absences'].ljust(3), end=' ')
             print(course['Tardies'].ljust(3), end=' ')
             print()
