@@ -247,7 +247,7 @@ class PowerSchool:
             print(colored(course['Course'].ljust(30), config['colors']['course_name']), end=' ')
             for grade in grades:
                 # TODO: Implement colors with thresholds
-                print(course['Grades'][grade].ljust(5), end=' ')
+                print(str(course['Grades'][grade]).ljust(5), end=' ')
             print(course['Absences'].ljust(3), end=' ')
             print(course['Tardies'].ljust(3), end=' ')
             print()
