@@ -246,8 +246,18 @@ class PowerSchool:
             print(''.join([self._simplify_attendance(course['This Week'][day]) for day in days]), end=' ')
             print(colored(course['Course'].ljust(30), config['colors']['course_name']), end=' ')
             for grade in grades:
-                # TODO: Implement colors with thresholds
-                print(str(course['Grades'][grade]).ljust(5), end=' ')
+                numerical = course['Grades'][grade]
+                if not numerical:
+                    # There's no grade in
+                    print(' ' * 5)
+                else:
+                    if numerical >= config['thresholds']['high']:
+                        color = config['colors']['high_grade']
+                    elif numerical >= config['thresholds']['medium']:
+                        color = config['colors']['medium_grade']
+                    else:
+                        color = config['colors']['low_grade']
+                    print(colored(('%s/%d' % (course['Letter Grades'][grade], course['Grades'][grade])).ljust(5), color), end=' ')
             print(course['Absences'].ljust(3), end=' ')
             print(course['Tardies'].ljust(3), end=' ')
             print()
