@@ -104,10 +104,10 @@ class PowerSchool:
             'pw': self.password,
         }
         content = self.session.post(login_url, data=payload).content
-        if args.html:
-            print(content)
 
         bs = BeautifulSoup(content, 'lxml')
+        if args.html:
+            print(bs.prettify())
         table = bs.find('table', class_='linkDescList grid')
         rows = table.find_all('tr')
 
