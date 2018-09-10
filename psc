@@ -232,7 +232,7 @@ class PowerSchool:
                        (2 * (''.join(days) + ' ')) +
                        'Course'.ljust(30) + ' ')
         for grade in grades:
-            header_line += grade.ljust(5) + ' '
+            header_line += grade.ljust(6) + ' '
         header_line += 'Abs'.ljust(3) + ' ' + 'Tar'.ljust(3)
         print(header_line)
         print('-' * len(header_line))
