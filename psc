@@ -215,8 +215,20 @@ class PowerSchool:
     # Helper functions
     def _render_attendance(self, string: str) -> str:
         short = string[0] if string else ' '
+        # V1=Virtual Login | ABX=Absent Excused | ATH=Sports Activity | CHA=Schdule Change | CLINIC=Clinic visit | CRT=Court | CV=College Visit | DR=Doctor's Appointment | ED=Early Dismissal | EXT=Externship | FE=Family Emergency | HMBD=Homebound | ILL=Illness | ISS=In School Suspension | OFFICE=In the Office | OSS=Out of School Suspension | RH=Religious Holiday | SA=School Activity | TAC=TA CUT | TEX=Excused Tardy | TRP=Approved Trip | TRU=Truant | TST=Testing | TUN=Tardy Unexcused | UNV=Unverified | UNX=Unexcused | WIT=With another teacher |
+        # TODO: What is a TA CUT? Is it negative?
+        if string == ' ':
+            return short
+        no_meeting = (string in ['.', '-'])
+        warning = (string in ['ISS', 'OFFICE', 'OSS', 'TRU', 'TUN', 'UNV', 'UNX'])
 
-        return short
+        if no_meeting:
+            color = 'grey'
+        elif warning:
+            color = 'red'
+        else:
+            color = 'green'
+        return colored(short, color)
 
     def print_grades(self):
         titles = self.titles
