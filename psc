@@ -213,8 +213,10 @@ class PowerSchool:
 
     # Print out table
     # Helper functions
-    def _simplify_attendance(self, string: str) -> str:
-        return string[0] if string else ' '
+    def _render_attendance(self, string: str) -> str:
+        short = string[0] if string else ' '
+
+        return short
 
     def print_grades(self):
         titles = self.titles
@@ -242,8 +244,8 @@ class PowerSchool:
             if course['Exp'] in config['ignored_periods']:
                 continue
             print(course['Exp'].ljust(3), end=' ')
-            print(''.join([self._simplify_attendance(course['Last Week'][day]) for day in days]), end=' ')
-            print(''.join([self._simplify_attendance(course['This Week'][day]) for day in days]), end=' ')
+            print(''.join([self._render_attendance(course['Last Week'][day]) for day in days]), end=' ')
+            print(''.join([self._render_attendance(course['This Week'][day]) for day in days]), end=' ')
             print(colored(course['Course'].ljust(30), config['colors']['course_name']), end=' ')
             for grade in grades:
                 numerical = course['Grades'][grade]
