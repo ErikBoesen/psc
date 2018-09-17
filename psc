@@ -232,7 +232,7 @@ class PowerSchool:
 
         # Remove ignored marking periods from grade list
         if config['remove_empty_marking_periods']:
-            marking_periods = sorted(list(used_marking_periods), key=lambda x: marking_periods.index(x))
+            marking_periods = sorted(list(used_marking_periods), key=lambda marking_period: marking_periods.index(marking_period))
         marking_periods = [marking_period for marking_period in marking_periods if marking_period not in config['ignored_marking_periods']]
 
         # Header
