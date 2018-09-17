@@ -114,7 +114,7 @@ class PowerSchool:
         # TODO: This entire parsing system is finnicky and could break at the slightest change to PowerSchool's table layout.
         # Ideally we should do this in some more consistent way.
         # For now though, this is all we can do.
-        # TL;DR: If you're making a widely-used web service, MAKE AN API.
+        # TL;DR: If you're making a widely-used web service, MAKE A UNIVERSALLY ACCESSIBLE API.
 
         # Remove unnecessary "Attendance by Class" header
         rows.pop(0)
@@ -126,6 +126,7 @@ class PowerSchool:
         header_cells = header.find_all('th')
         titles = [cell.text for cell in header_cells[:4] + header_cells[-2:]]
         grades = [cell.text for cell in header_cells[4:-2]]
+        used_marking_periods = set()
         # TODO: Clean up confusing naming
         days = []
         for day in rows.pop(0).find_all('th'):
@@ -160,15 +161,14 @@ class PowerSchool:
                     course_id = grade_cell.find('a')['href'].strip('scores.html?frn=')
                     course_id = course_id[:course_id.find('&')]
                     course['ID'] = course_id
-                # TODO: This is a complete shot in the dark. I have no idea how grades are formatted in the table.
-                # This is just my best guess based on the class meta format.
-
                 # If no grade is in yet, put it in empty.
                 raw = self._clean_grade(grade_cell.text.strip())
                 if not raw:
                     # TODO: It would be better to set them to None than to an empty string...
                     course['Letter Grades'][grade] = course['Grades'][grade] = raw
                 else:
+                    used_marking_periods.add(grade)
+                    print(used_marking_periods)
                     course['Letter Grades'][grade] = grade_cell.find('br').previousSibling.strip()
                     course['Grades'][grade] = int(grade_cell.find('br').nextSibling.strip().strip('%'))
 
@@ -186,11 +186,13 @@ class PowerSchool:
         if args.debug:
             print(titles)
             print(grades)
+            print(used_marking_periods)
             print(days)
             print(courses)
 
         self.titles = titles
         self.grades = grades
+        self.used_marking_periods = used_marking_periods
         self.days = days
         self.courses = courses
 
@@ -233,13 +235,14 @@ class PowerSchool:
     def print_grades(self):
         titles = self.titles
         grades = self.grades
+        used_marking_periods = self.used_marking_periods
         days = self.days
         courses = self.courses
 
         # Remove ignored marking periods from grade list
         if config['remove_empty_marking_periods']:
-            grades = [grade for grade in grades if True in [True for course in courses if course['Grades'][grade]]]
-        grades = [grade for grade in self.grades if grade not in config['ignored_marking_periods']]
+            grades = list(used_marking_periods)
+        grades = [grade for grade in grades if grade not in config['ignored_marking_periods']]
 
         # Header
         header_line = ('Per'.ljust(3) + ' ' +
