@@ -125,7 +125,7 @@ class PowerSchool:
         header = rows.pop(0)
         header_cells = header.find_all('th')
         titles = [cell.text for cell in header_cells[:4] + header_cells[-2:]]
-        grades = [cell.text for cell in header_cells[4:-2]]
+        marking_periods = [cell.text for cell in header_cells[4:-2]]
         used_marking_periods = set()
         # TODO: Clean up confusing naming
         days = []
@@ -154,8 +154,7 @@ class PowerSchool:
 
             course['Letter Grades'] = {}
             course['Grades'] = {}
-            # TODO: 'grades' is actually a list of marking periods. Maybe use a more intuitive name?
-            for grade in grades:
+            for marking_period in marking_periods:
                 grade_cell = cells.pop(0)
                 if grade_cell.find('a'):
                     course_id = grade_cell.find('a')['href'].strip('scores.html?frn=')
@@ -165,12 +164,11 @@ class PowerSchool:
                 raw = self._clean_grade(grade_cell.text.strip())
                 if not raw:
                     # TODO: It would be better to set them to None than to an empty string...
-                    course['Letter Grades'][grade] = course['Grades'][grade] = raw
+                    course['Letter Grades'][marking_period] = course['Grades'][marking_period] = raw
                 else:
-                    used_marking_periods.add(grade)
-                    print(used_marking_periods)
-                    course['Letter Grades'][grade] = grade_cell.find('br').previousSibling.strip()
-                    course['Grades'][grade] = int(grade_cell.find('br').nextSibling.strip().strip('%'))
+                    used_marking_periods.add(marking_period)
+                    course['Letter Grades'][marking_period] = grade_cell.find('br').previousSibling.strip()
+                    course['Grades'][marking_period] = int(grade_cell.find('br').nextSibling.strip().strip('%'))
 
             # Absences and Tardies
             # TODO: Throw if the headers are wrong
@@ -185,13 +183,13 @@ class PowerSchool:
 
         if args.debug:
             print(titles)
-            print(grades)
+            print(marking_periods)
             print(used_marking_periods)
             print(days)
             print(courses)
 
         self.titles = titles
-        self.grades = grades
+        self.marking_periods = marking_periods
         self.used_marking_periods = used_marking_periods
         self.days = days
         self.courses = courses
@@ -234,22 +232,22 @@ class PowerSchool:
 
     def print_grades(self):
         titles = self.titles
-        grades = self.grades
+        marking_periods = self.marking_periods
         used_marking_periods = self.used_marking_periods
         days = self.days
         courses = self.courses
 
         # Remove ignored marking periods from grade list
         if config['remove_empty_marking_periods']:
-            grades = list(used_marking_periods)
-        grades = [grade for grade in grades if grade not in config['ignored_marking_periods']]
+            marking_periods = list(used_marking_periods)
+        marking_periods = [marking_period for marking_period in marking_periods if marking_period not in config['ignored_marking_periods']]
 
         # Header
         header_line = ('Per'.ljust(3) + ' ' +
                        (2 * (''.join(days) + ' ')) +
                        'Course'.ljust(30) + ' ')
-        for grade in grades:
-            header_line += grade.ljust(6) + ' '
+        for marking_period in marking_periods:
+            header_line += marking_period.ljust(6) + ' '
         header_line += 'Abs'.ljust(3) + ' ' + 'Tar'.ljust(3)
         print(header_line)
         print('-' * len(header_line))
@@ -262,8 +260,8 @@ class PowerSchool:
             print(''.join([self._render_attendance(course['Last Week'][day]) for day in days]), end=' ')
             print(''.join([self._render_attendance(course['This Week'][day]) for day in days]), end=' ')
             print(colored(course['Course'].ljust(30), config['colors']['course_name']), end=' ')
-            for grade in grades:
-                numerical = course['Grades'][grade]
+            for marking_period in marking_periods:
+                numerical = course['Grades'][marking_period]
                 if not numerical:
                     # There's no grade in
                     print(' ' * 6, end=' ')
@@ -275,7 +273,7 @@ class PowerSchool:
                     else:
                         color = config['colors']['low_grade']
                     # TODO: Make sure white color supports black-on-white terminals
-                    print(colored(('%s/%d' % (course['Letter Grades'][grade], course['Grades'][grade])).ljust(6), 'grey', color), end=' ')
+                    print(colored(('%s/%d' % (course['Letter Grades'][marking_period], course['Grades'][marking_period])).ljust(6), 'grey', color), end=' ')
             print(course['Absences'].ljust(3), end=' ')
             print(course['Tardies'].ljust(3), end=' ')
             print()
