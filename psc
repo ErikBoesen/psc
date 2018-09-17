@@ -237,9 +237,9 @@ class PowerSchool:
         courses = self.courses
 
         # Remove ignored marking periods from grade list
-        grades = [grade for grade in self.grades if grade not in config['ignored_marking_periods']]
         if config['remove_empty_marking_periods']:
             grades = [grade for grade in grades if True in [True for course in courses if course['Grades'][grade]]]
+        grades = [grade for grade in self.grades if grade not in config['ignored_marking_periods']]
 
         # Header
         header_line = ('Per'.ljust(3) + ' ' +
