@@ -211,12 +211,8 @@ class PowerSchool:
         else:
             return string
 
-    # Print out table
-    # Helper functions
     def _render_attendance(self, string: str) -> str:
         short = string[0] if string else ' '
-        # V1=Virtual Login | ABX=Absent Excused | ATH=Sports Activity | CHA=Schdule Change | CLINIC=Clinic visit | CRT=Court | CV=College Visit | DR=Doctor's Appointment | ED=Early Dismissal | EXT=Externship | FE=Family Emergency | HMBD=Homebound | ILL=Illness | ISS=In School Suspension | OFFICE=In the Office | OSS=Out of School Suspension | RH=Religious Holiday | SA=School Activity | TAC=TA CUT | TEX=Excused Tardy | TRP=Approved Trip | TRU=Truant | TST=Testing | TUN=Tardy Unexcused | UNV=Unverified | UNX=Unexcused | WIT=With another teacher |
-        # TODO: What is a TA CUT? Is it negative?
         if string == ' ':
             return short
         elif string in ['.', '-']:
@@ -236,7 +232,7 @@ class PowerSchool:
 
         # Remove ignored marking periods from grade list
         if config['remove_empty_marking_periods']:
-            marking_periods = list(used_marking_periods)
+            marking_periods = sorted(list(used_marking_periods), key=lambda x: marking_periods.index(x))
         marking_periods = [marking_period for marking_period in marking_periods if marking_period not in config['ignored_marking_periods']]
 
         # Header
