@@ -219,12 +219,9 @@ class PowerSchool:
         # TODO: What is a TA CUT? Is it negative?
         if string == ' ':
             return short
-        no_meeting = (string in ['.', '-'])
-        warning = (string in ['ISS', 'OFFICE', 'OSS', 'TRU', 'TUN', 'UNV', 'UNX'])
-
-        if no_meeting:
+        elif string in ['.', '-']:
             color = 'grey'
-        elif warning:
+        elif string in ['ISS', 'OFFICE', 'OSS', 'TRU', 'TUN', 'UNV', 'UNX']:
             color = 'red'
         else:
             color = 'green'
