@@ -1,7 +1,7 @@
 # `psc` for PowerSchool
 > A minimal command-line tool for reading grades from [PowerSchool](https://www.powerschool.com/).
-
-Disclaimer: `psc` is not created by, affiliated with, or supported by PowerSchool.
+![Sample screenshot](screenshot.png)
+> _Disclaimer: not my actual grades or attendance record._
 
 ## Installation
 From the `psc` directory, run:
