@@ -59,6 +59,7 @@ else:
         'ignored_periods': [],
         'ignored_marking_periods': [],
         'remove_empty_marking_periods': False,
+        'remove_redundant_semester': True,
         'colors': {
             'header': 'grey',
             'course_name': 'cyan',
@@ -234,6 +235,12 @@ class PowerSchool:
         if config['remove_empty_marking_periods']:
             marking_periods = sorted(list(used_marking_periods), key=lambda marking_period: marking_periods.index(marking_period))
         marking_periods = [marking_period for marking_period in marking_periods if marking_period not in config['ignored_marking_periods']]
+        if config['remove_redundant_semester']:
+            # TODO: Find cleaner implementation
+            if ('Q1' in marking_periods and not 'Q2' in marking_periods and 'S1' in marking_periods):
+                marking_periods.remove('S1')
+            if ('Q3' in marking_periods and not 'Q4' in marking_periods and 'S2' in marking_periods):
+                marking_periods.remove('S2')
 
         # Header
         header_line = ('Per'.ljust(3) + ' ' +
