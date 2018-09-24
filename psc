@@ -288,7 +288,7 @@ class PowerSchool:
             from selenium import webdriver
             from selenium.webdriver.firefox.options import Options as chromeOptions
             browser_options = chromeOptions()
-            browser_options.add_argument('--headless')
+            #browser_options.add_argument('--headless')
             self.driver = webdriver.Chrome(chrome_options=browser_options)
             self.driver.get('https://' + self.host + '/guardian/home.html')
             self.driver.find_element_by_id('fieldAccount').send_keys(self.username)
@@ -302,6 +302,8 @@ class PowerSchool:
         course_url = 'https://' + self.host + '/guardian/scores.html?frn=' + course['ID'] + (('&fg=' + marking_period) if marking_period else '')
         self.virtual_login()
         self.driver.get(course_url)
+        innerHTML = browser.execute_script('return document.body.innerHTML')
+        print(innerHTML)
         #raw_content = self.session.get(course_url).content
         #raw_content = self.driver.page_source
         #bs = BeautifulSoup(raw_content, 'lxml')
