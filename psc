@@ -82,6 +82,8 @@ class PowerSchool:
     username: str
     password: str
 
+    driver = None
+
     def __init__(self, host, username, password):
         self.host = host
         self.username = username
@@ -279,34 +281,32 @@ class PowerSchool:
             print()
 
     def virtual_login(self):
-        from selenium import webdriver
-        driver = webdriver.PhantomJS()
-        driver.get('https://' + self.host + '/guardian/home.html')
-        driver.find_element_by_id('fieldAccount').send_keys(self.username)
-        driver.find_element_by_id('fieldPassword').send_keys(self.password)
-        driver.find_element_by_id('btn-enter-sign-in').click()
-        print(driver.find_elements_by_css_selector('table'))
-
+        if not self.driver:
+            from selenium import webdriver
+            self.driver = webdriver.PhantomJS()
+            self.driver.get('https://' + self.host + '/guardian/home.html')
+            self.driver.find_element_by_id('fieldAccount').send_keys(self.username)
+            self.driver.find_element_by_id('fieldPassword').send_keys(self.password)
+            self.driver.find_element_by_id('btn-enter-sign-in').click()
 
     def get_course(self, period, marking_period=None):
         course = next((course for course in self.courses if course['Exp'] == period), None)
         # TODO: What does it do when you don't give a marking period?
         course_url = 'https://' + self.host + '/guardian/scores.html?frn=' + course['ID'] + (('&fg=' + marking_period) if marking_period else '')
         self.virtual_login()
-        """
-        from selenium import webdriver
-        driver = webdriver.Firefox()
-        driver.get(course_url)
-        """
-        return None
-        raw_content = self.session.get(course_url).content
-        bs = BeautifulSoup(raw_content, 'lxml')
-        meta_table = bs.find('table', {'class': 'linkDescList'})
+        self.driver.get(course_url)
+        #raw_content = self.session.get(course_url).content
+        #raw_content = self.driver.page_source
+        #bs = BeautifulSoup(raw_content, 'lxml')
+        #meta_table = bs.find('table', {'class': 'linkDescList'})
+        meta_table = self.driver.find_element_by_id('scoreTable')
         meta_fields = meta_table.find_all('tr')[1].find_all('td')
         meta = {}
         meta['Course'] = meta_fields[0].text
         meta['Teacher'] = meta_fields[1].text
         meta['Expression'] = meta_fields[2].text
+        print(raw_content)
+        print(meta)
         # TODO: This is a bunch of JavaScript when it's normally _ _%. For now we will just use the stat we already have.
         #meta['Final Grade'] = meta_fields[3].text
         # Breaks when not given a marking period...
