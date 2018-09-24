@@ -249,7 +249,8 @@ class PowerSchool:
 
         # Header
         header_line = ('Per'.ljust(3) + ' ' +
-                       (2 * (''.join(days) + ' ')) +
+                       ((''.join(days) + ' ') if config['show_previous_week_attendance'] else '') +
+                       ((''.join(days) + ' ') if config['show_current_week_attendance']  else '') +
                        'Course'.ljust(30) + ' ')
         for marking_period in marking_periods:
             header_line += marking_period.ljust(6) + ' '
@@ -262,8 +263,10 @@ class PowerSchool:
             if course['Exp'] in config['ignored_periods']:
                 continue
             print(course['Exp'].ljust(3), end=' ')
-            print(''.join([self._render_attendance(course['Last Week'][day]) for day in days]), end=' ')
-            print(''.join([self._render_attendance(course['This Week'][day]) for day in days]), end=' ')
+            if config['show_previous_week_attendance']:
+                print(''.join([self._render_attendance(course['Last Week'][day]) for day in days]), end=' ')
+            if config['show_current_week_attendance']:
+                print(''.join([self._render_attendance(course['This Week'][day]) for day in days]), end=' ')
             print(colored(course['Course'].ljust(30), config['colors']['course_name']), end=' ')
             for marking_period in marking_periods:
                 numerical = course['Grades'][marking_period]
