@@ -278,13 +278,27 @@ class PowerSchool:
             print(course['Tardies'].ljust(3), end=' ')
             print()
 
+    def virtual_login(self):
+        from selenium import webdriver
+        driver = webdriver.PhantomJS()
+        driver.get('https://' + self.host + '/guardian/home.html')
+        driver.find_element_by_id('fieldAccount').send_keys(self.username)
+        driver.find_element_by_id('fieldPassword').send_keys(self.password)
+        driver.find_element_by_id('btn-enter-sign-in').click()
+        print(driver.find_elements_by_css_selector('table'))
+
+
     def get_course(self, period, marking_period=None):
         course = next((course for course in self.courses if course['Exp'] == period), None)
         # TODO: What does it do when you don't give a marking period?
         course_url = 'https://' + self.host + '/guardian/scores.html?frn=' + course['ID'] + (('&fg=' + marking_period) if marking_period else '')
+        self.virtual_login()
+        """
         from selenium import webdriver
         driver = webdriver.Firefox()
         driver.get(course_url)
+        """
+        return None
         raw_content = self.session.get(course_url).content
         bs = BeautifulSoup(raw_content, 'lxml')
         meta_table = bs.find('table', {'class': 'linkDescList'})
