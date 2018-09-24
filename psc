@@ -281,7 +281,11 @@ class PowerSchool:
     def get_course(self, period, marking_period=None):
         course = next((course for course in self.courses if course['Exp'] == period), None)
         # TODO: What does it do when you don't give a marking period?
-        raw_content = self.session.get('https://' + self.host + '/guardian/scores.html?frn=' + course['ID'] + (('&fg=' + marking_period) if marking_period else '')).content
+        course_url = 'https://' + self.host + '/guardian/scores.html?frn=' + course['ID'] + (('&fg=' + marking_period) if marking_period else '')
+        from selenium import webdriver
+        driver = webdriver.Firefox()
+        driver.get(course_url)
+        raw_content = self.session.get(course_url).content
         bs = BeautifulSoup(raw_content, 'lxml')
         meta_table = bs.find('table', {'class': 'linkDescList'})
         meta_fields = meta_table.find_all('tr')[1].find_all('td')
