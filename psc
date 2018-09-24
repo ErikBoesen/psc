@@ -358,18 +358,3 @@ if args.period:
     ps.get_course(args.period, args.marking_period)
 else:
     ps.print_grades()
-
-"""
-def getRawAssignments(p,period):
-    ...
-    p=s.get(href, headers = {'Accept-Encoding': 'identity'})
-    data=BeautifulSoup(p.content, 'lxml')
-    table=data.find('table', { 'align' : 'center' })
-    tr=table.findAll('tr')
-    assignments={}
-    for i in range (1,len(tr)):
-        td=tr[i].findAll('td')
-        assignments['{}'.format(hex(i))]=createSmallAssignment(td[0].getText(),td[1].getText(),td[2].getText(),td[8].getText(),td[9].getText())
-    return assignments
-    return all
-"""
