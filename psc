@@ -283,7 +283,10 @@ class PowerSchool:
     def virtual_login(self):
         if not self.driver:
             from selenium import webdriver
-            self.driver = webdriver.PhantomJS()
+            from selenium.webdriver.firefox.options import Options as fireFoxOptions
+            browser_options = fireFoxOptions()
+            browser_options.add_argument('--headless')
+            self.driver = webdriver.Firefox(firefox_options=browser_options)
             self.driver.get('https://' + self.host + '/guardian/home.html')
             self.driver.find_element_by_id('fieldAccount').send_keys(self.username)
             self.driver.find_element_by_id('fieldPassword').send_keys(self.password)
@@ -292,6 +295,7 @@ class PowerSchool:
     def get_course(self, period, marking_period=None):
         course = next((course for course in self.courses if course['Exp'] == period), None)
         # TODO: What does it do when you don't give a marking period?
+        # THIS PROCESS IS NOT WELL POLISHED. Proceed with caution.
         course_url = 'https://' + self.host + '/guardian/scores.html?frn=' + course['ID'] + (('&fg=' + marking_period) if marking_period else '')
         self.virtual_login()
         self.driver.get(course_url)
