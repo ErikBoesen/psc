@@ -283,10 +283,10 @@ class PowerSchool:
     def virtual_login(self):
         if not self.driver:
             from selenium import webdriver
-            from selenium.webdriver.firefox.options import Options as fireFoxOptions
-            browser_options = fireFoxOptions()
+            from selenium.webdriver.firefox.options import Options as chromeOptions
+            browser_options = chromeOptions()
             browser_options.add_argument('--headless')
-            self.driver = webdriver.Firefox(firefox_options=browser_options)
+            self.driver = webdriver.Chrome(chrome_options=browser_options)
             self.driver.get('https://' + self.host + '/guardian/home.html')
             self.driver.find_element_by_id('fieldAccount').send_keys(self.username)
             self.driver.find_element_by_id('fieldPassword').send_keys(self.password)
