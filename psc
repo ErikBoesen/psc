@@ -60,6 +60,9 @@ else:
         'ignored_marking_periods': [],
         'remove_empty_marking_periods': False,
         'remove_redundant_semester': True,
+        'show_previous_week_attendance': False,
+        'show_current_week_attendance': True,
+        'show_attendance_totals': True,
         'colors': {
             'header': 'grey',
             'course_name': 'cyan',
