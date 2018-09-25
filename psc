@@ -38,8 +38,7 @@ else:
         yaml.dump(credentials, f)
     os.chmod(CREDENTIALS_PATH, stat.S_IRUSR | stat.S_IWUSR)
 
-# Check if group or public can read config and the private details therein.
-# If so, warn user.
+# Warn if group or public can read config and the private details therein.
 if os.stat(CREDENTIALS_PATH).st_mode & (stat.S_IRGRP | stat.S_IROTH):
     print('Warning: config file may be accessible by other users.', file=sys.stderr)
 
@@ -254,7 +253,8 @@ class PowerSchool:
                        'Course'.ljust(30) + ' ')
         for marking_period in marking_periods:
             header_line += marking_period.ljust(6) + ' '
-        header_line += 'Abs'.ljust(3) + ' ' + 'Tar'.ljust(3)
+        if config['show_attendance_totals']:
+            header_line += 'Abs'.ljust(3) + ' ' + 'Tar'.ljust(3)
         print(header_line)
         print('-' * len(header_line))
 
@@ -282,8 +282,9 @@ class PowerSchool:
                         color = config['colors']['low_grade']
                     # TODO: Make sure white color supports black-on-white terminals
                     print(colored(('%s/%d' % (course['Letter Grades'][marking_period], course['Grades'][marking_period])).ljust(6), 'grey', color), end=' ')
-            print(course['Absences'].ljust(3), end=' ')
-            print(course['Tardies'].ljust(3), end=' ')
+            if config['show_attendance_totals']:
+                print(course['Absences'].ljust(3), end=' ')
+                print(course['Tardies'].ljust(3), end=' ')
             print()
 
     def virtual_login(self):
