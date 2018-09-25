@@ -59,8 +59,8 @@ else:
         'ignored_marking_periods': [],
         'remove_empty_marking_periods': False,
         'remove_redundant_semester': True,
-        'show_previous_week_attendance': False,
-        'show_current_week_attendance': True,
+        'show_last_week_attendance': False,
+        'show_this_week_attendance': True,
         'show_attendance_totals': True,
         'colors': {
             'header': 'grey',
@@ -248,8 +248,8 @@ class PowerSchool:
 
         # Header
         header_line = ('Per'.ljust(3) + ' ' +
-                       ((''.join(days) + ' ') if config['show_previous_week_attendance'] else '') +
-                       ((''.join(days) + ' ') if config['show_current_week_attendance']  else '') +
+                       ((''.join(days) + ' ') if config['show_last_week_attendance'] else '') +
+                       ((''.join(days) + ' ') if config['show_this_week_attendance']  else '') +
                        'Course'.ljust(30) + ' ')
         for marking_period in marking_periods:
             header_line += marking_period.ljust(6) + ' '
@@ -263,9 +263,9 @@ class PowerSchool:
             if course['Exp'] in config['ignored_periods']:
                 continue
             print(course['Exp'].ljust(3), end=' ')
-            if config['show_previous_week_attendance']:
+            if config['show_last_week_attendance']:
                 print(''.join([self._render_attendance(course['Last Week'][day]) for day in days]), end=' ')
-            if config['show_current_week_attendance']:
+            if config['show_this_week_attendance']:
                 print(''.join([self._render_attendance(course['This Week'][day]) for day in days]), end=' ')
             print(colored(course['Course'].ljust(30), config['colors']['course_name']), end=' ')
             for marking_period in marking_periods:
