@@ -31,6 +31,9 @@ To view grade and task list for a specific class and marking period (not fully i
 psc -p 3 -m Q1
 ```
 
+## Configuration
+At first run, your PowerSchool credentials will be requested and saved to `~/.psc_credentials.yml`. Other configuration options will populate `~/.psc.yml`, and may be tweaked as desired.
+
 ## License
 [MIT](LICENSE)
 
