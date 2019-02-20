@@ -62,6 +62,7 @@ else:
         'show_last_week_attendance': False,
         'show_this_week_attendance': True,
         'show_attendance_totals': True,
+        'strip_levels': True,
         'colors': {
             'header': 'grey',
             'course_name': 'cyan',
@@ -267,7 +268,13 @@ class PowerSchool:
                 print(''.join([self._render_attendance(course['Last Week'][day]) for day in days]), end=' ')
             if config['show_this_week_attendance']:
                 print(''.join([self._render_attendance(course['This Week'][day]) for day in days]), end=' ')
-            print(colored(course['Course'].ljust(30), config['colors']['course_name']), end=' ')
+
+            course_name = course['Course']
+            if config['strip_levels']:
+                for level in ['IB', 'AP', 'IBH', 'SL', 'HL', ' II', ' I']:
+                    course_name.replace(level, '')
+                course_name.strip()
+            print(colored(course_name.ljust(30), config['colors']['course_name']), end=' ')
             for marking_period in marking_periods:
                 numerical = course['Grades'][marking_period]
                 if not numerical:
