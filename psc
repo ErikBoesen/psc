@@ -251,7 +251,7 @@ class PowerSchool:
         header_line = ('Per'.ljust(3) + ' ' +
                        ((''.join(days) + ' ') if config['show_last_week_attendance'] else '') +
                        ((''.join(days) + ' ') if config['show_this_week_attendance']  else '') +
-                       'Course'.ljust(30) + ' ')
+                       'Course'.ljust(20 if config['strip_levels'] else 30) + ' ')
         for marking_period in marking_periods:
             header_line += marking_period.ljust(6) + ' '
         if config['show_attendance_totals']:
@@ -271,10 +271,10 @@ class PowerSchool:
 
             course_name = course['Course']
             if config['strip_levels']:
-                for level in ['IB', 'AP', 'IBH', 'SL', 'HL', ' II', ' I']:
-                    course_name.replace(level, '')
+                for level in ['IBH', 'AP', 'IB', 'SL', 'HL', ' II', ' I', ' 12', ' 11']:
+                    course_name = course_name.replace(level, '')
                 course_name.strip()
-            print(colored(course_name.ljust(30), config['colors']['course_name']), end=' ')
+            print(colored(course_name.ljust(20 if config['strip_levels'] else 30), config['colors']['course_name']), end=' ')
             for marking_period in marking_periods:
                 numerical = course['Grades'][marking_period]
                 if not numerical:
