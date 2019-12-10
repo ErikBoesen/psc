@@ -10,6 +10,6 @@ link:
 uninstall:
 	rm $(dest)/$(exec)
 
-purge:
+purge: uninstall
 	rm ~/.psc.yml
 	rm ~/.psc_credentials.yml
