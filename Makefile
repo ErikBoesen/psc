@@ -8,6 +8,8 @@ link:
 	ln -s $(realpath $(exec)) $(dest)
 
 uninstall:
+	rm $(dest)/$(exec)
+
+purge:
 	rm ~/.psc.yml
 	rm ~/.psc_credentials.yml
-	rm $(dest)/$(exec)
