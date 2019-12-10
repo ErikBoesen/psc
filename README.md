@@ -19,11 +19,12 @@ To uninstall:
 ```sh
 make uninstall
 ```
+Uninstallation will not delete configuration files by default. To force a full purge:
+```sh
+make purge
+```
+
 Any of these commands may require root privileges depending on your environment.
-
-To cleanup credentials located at root and uninstall the application run:
-
-`make purge`
 
 ## Use
 To view all grades:
