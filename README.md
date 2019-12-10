@@ -21,6 +21,10 @@ make uninstall
 ```
 Any of these commands may require root privileges depending on your environment.
 
+To cleanup credentials located at root (you should run after uninstall):
+
+`make purge`
+
 ## Use
 To view all grades:
 ```sh
