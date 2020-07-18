@@ -120,7 +120,6 @@ class PowerSchool:
         # TODO: This entire parsing system is finnicky and could break at the slightest change to PowerSchool's table layout.
         # Ideally we should do this in some more consistent way.
         # For now though, this is all we can do.
-        # TL;DR: If you're making a widely-used web service, MAKE A UNIVERSALLY ACCESSIBLE API.
 
         # Remove unnecessary "Attendance by Class" header
         rows.pop(0)
