@@ -220,9 +220,9 @@ class PowerSchool:
         short = string[0] if string else ' '
         if string == ' ':
             return short
-        elif string in ['.', '-']:
+        elif string in ('.', '-'):
             color = 'grey'
-        elif string in ['ISS', 'OFFICE', 'OSS', 'TRU', 'TUN', 'UNV', 'UNX']:
+        elif string in ('ISS', 'OFFICE', 'OSS', 'TRU', 'TUN', 'UNV', 'UNX'):
             color = 'red'
         else:
             color = 'green'
@@ -270,7 +270,7 @@ class PowerSchool:
 
             course_name = course['Course']
             if config['strip_levels']:
-                for level in ['IBH', 'AP', 'IB', 'SL', 'HL', ' II', ' I', ' 12', ' 11']:
+                for level in ('IBH', 'AP', 'IB', 'SL', 'HL', ' II', ' I', ' 12', ' 11'):
                     course_name = course_name.replace(level, '')
                 course_name.strip()
             print(colored(course_name.ljust(20 if config['strip_levels'] else 30), config['colors']['course_name']), end=' ')
